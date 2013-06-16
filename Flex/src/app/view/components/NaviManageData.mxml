@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:NavigatorContent xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					xmlns:s="library://ns.adobe.com/flex/spark"
+					xmlns:mx="library://ns.adobe.com/flex/mx"  
+					label="编号重置">
+	<fx:Script>
+		<![CDATA[
+			import app.view.components.subComponents.BasePopupPanel;
+			
+			public static const RESET:String = "reset";
+			
+			public static const CLOSE:String = "close";
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<s:layout>
+		<s:VerticalLayout paddingTop="5" paddingLeft="5" paddingBottom="5" paddingRight="5"/>
+	</s:layout>
+	
+	<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0.3">
+		<s:layout>
+			<s:HorizontalLayout paddingTop="2"/>
+		</s:layout>			
+		<s:Label paddingTop="5" text="初始编号：" fontWeight="bold"/>
+		<s:VGroup width="100%">
+			<s:HGroup width="100%">
+				<s:HGroup width="100%" verticalAlign="middle">
+					<s:Label text="残鉴字："/>
+					<s:NumericStepper id="numCan" width="100%" minimum="1" stepSize="1" maximum="9999" value="1"/>
+				</s:HGroup>
+				<s:HGroup width="100%" verticalAlign="middle">
+					<s:Label text="三鉴字："/>
+					<s:NumericStepper id="numSan" width="100%" minimum="1" stepSize="1" maximum="9999" value="1"/>
+				</s:HGroup>				
+			</s:HGroup>
+			<s:HGroup width="100%">
+				<s:HGroup width="100%" verticalAlign="middle">
+					<s:Label text="伤鉴字："/>
+					<s:NumericStepper id="numShang" width="100%" minimum="1" stepSize="1" maximum="9999" value="1"/>
+				</s:HGroup>
+				<s:HGroup width="100%" verticalAlign="middle">
+					<s:Label text="精鉴字："/>
+					<s:NumericStepper id="numJing" width="100%" minimum="1" stepSize="1" maximum="9999" value="1"/>
+				</s:HGroup>				
+			</s:HGroup>
+		</s:VGroup>
+	</s:SkinnableContainer>	
+	
+	<s:HGroup horizontalAlign="center" width="100%">
+		<s:Button label="编号重置" width="100"  skinClass="skins.skinLoginButton" 
+				  buttonDown="dispatchEvent(new Event(RESET))"/>
+		<s:Button label="返回" width="100"  skinClass="skins.skinLoginButton" 
+				  buttonDown="dispatchEvent(new Event(CLOSE))"/>
+	</s:HGroup>
+</s:NavigatorContent>

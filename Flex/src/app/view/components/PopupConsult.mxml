@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<subComponents:BasePopupPanel xmlns:fx="http://ns.adobe.com/mxml/2009"
+							  xmlns:s="library://ns.adobe.com/flex/spark"
+							  xmlns:mx="library://ns.adobe.com/flex/mx"
+							  xmlns:subComponents="app.view.components.subComponents.*"
+							  verticalCenter="0" horizontalCenter="0"
+							  width="650" height="100%" enableIcon="false" enableMinimizeButton="false"
+							  panelTitle="案件会诊" skinClass="skins.skinBasePopupPanel">
+	
+	<fx:Script>
+		<![CDATA[
+			import app.model.vo.AttachVO;
+			import app.model.vo.ReportVO;
+			
+			import mx.collections.ArrayCollection;
+			
+			public static const ACCEPT:String = "accept";
+			public static const SUBMIT:String = "submit";
+			public static const CLOSE:String = "close";
+			public static const BACK:String = "back";
+			
+			public static const UPLOAD:String = "upload";
+			public static const DOWNLOAD:String = "download";			
+			
+			[Bindable]public var report:ReportVO;
+			[Bindable]public var attach:AttachVO;
+			
+			[Bindable]public var listConsulter:ArrayCollection = null;
+		]]>
+	</fx:Script>
+	<subComponents:states>
+		<s:State name="VIEW"/>
+		<s:State name="ACCEPT"/>
+		<s:State name="EDIT"/>
+	</subComponents:states>
+	
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	
+	<s:VGroup width="100%">
+		<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0">
+			<s:layout>
+				<s:HorizontalLayout/>
+			</s:layout>
+			<s:Label paddingTop="5" text="　　会诊人：" fontWeight="bold"/>
+			
+			<s:Group id="group" width="100%">				
+				<s:DataGroup id="dataGroup" width="{group.width}" dataProvider="{listConsulter}" 
+							 enabled="false" enabled.EDIT="true"
+							 itemRenderer="app.view.components.subComponents.ItemRendererGroup">
+					<s:layout>
+						<s:TileLayout columnAlign="justifyUsingWidth" 
+									  paddingTop="2" paddingBottom="2"/>
+					</s:layout>			
+				</s:DataGroup>
+			</s:Group>
+		</s:SkinnableContainer>		
+		
+		<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0.3">
+			<s:layout>
+				<s:HorizontalLayout verticalAlign="middle"/>
+			</s:layout>
+			<s:Label text="其他会诊人：" fontWeight="bold"/>
+			<s:TextInput id="textOtherConsult" width="100%" text="{report.otherConsulter}"
+						 editable="false" editable.EDIT="true"/>
+			<s:Label text="　会诊时间：" fontWeight="bold"/>
+			<s:TextInput id="textPrintDate" editable="false" text="{report.ConsultDate}" width="100%"/>
+		</s:SkinnableContainer>		
+						
+		<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0">
+			<s:layout>
+				<s:HorizontalLayout verticalAlign="middle"/>
+			</s:layout>
+			<s:Label text="　会诊结果：" fontWeight="bold"/>
+			<s:Button label="上传" buttonDown="dispatchEvent(new Event(UPLOAD))" enabled="false" enabled.EDIT="true"/>
+			<s:Button label="下载" buttonDown="dispatchEvent(new Event(DOWNLOAD))" enabled="{attach.consultResult}"/>
+			<s:Label text="（未上传）" visible="{!attach.consultResult}"/>
+		</s:SkinnableContainer>		
+		
+		<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0.3">
+			<s:layout>
+				<s:HorizontalLayout/>
+			</s:layout>
+			<s:Label text="　会诊照片：" fontWeight="bold" paddingTop="5"/>
+			<s:List dataProvider="{attach.listConsultImage}" width="100%" height="118" horizontalScrollPolicy="on"
+					itemRenderer="app.view.components.subComponents.ItemRendererAttach"
+					itemRenderer.VIEW="app.view.components.subComponents.ItemRendererAttachStatic">
+				<s:layout>
+					<s:HorizontalLayout/>
+				</s:layout>		
+			</s:List>
+		</s:SkinnableContainer>		
+		
+		<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0">
+			<s:layout>
+				<s:HorizontalLayout horizontalAlign="center"/>
+			</s:layout>			
+			<s:Button width="100"  skinClass="skins.skinLoginButton" label="接受会诊" buttonDown="dispatchEvent(new Event(ACCEPT));" 
+					  enabled="false" enabled.ACCEPT="true"/>
+			<s:Button width="100"  skinClass="skins.skinLoginButton" label="会诊完毕" buttonDown="dispatchEvent(new Event(SUBMIT));" 
+					  enabled="false" enabled.EDIT="true"/>
+			<s:Button width="100"  skinClass="skins.skinLoginButton" label="重新受理" buttonDown="dispatchEvent(new Event(BACK));" 
+					  enabled="false" enabled.EDIT="true"/>		
+			<s:Spacer width="100%"/>
+			<s:Button width="100"  skinClass="skins.skinLoginButton" label="关闭" buttonDown="dispatchEvent(new Event(CLOSE));"/>
+		</s:SkinnableContainer>			
+	</s:VGroup>	
+		
+</subComponents:BasePopupPanel>

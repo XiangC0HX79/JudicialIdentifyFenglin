@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<subComponents:BasePopupPanel xmlns:fx="http://ns.adobe.com/mxml/2009"
+							  xmlns:s="library://ns.adobe.com/flex/spark"
+							  xmlns:mx="library://ns.adobe.com/flex/mx"
+							  xmlns:subComponents="app.view.components.subComponents.*"
+							  verticalCenter="0" horizontalCenter="0"
+							  width="650" height="100%" enableIcon="false" enableMinimizeButton="false"
+							  panelTitle="跟踪反馈" skinClass="skins.skinBasePopupPanel">
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[			
+			import app.model.vo.FeedbackVO;
+			
+			import mx.collections.ArrayCollection;
+			
+			public static const SUBMIT:String = "submit";
+			public static const CLOSE:String = "close";
+						
+			[Bindable]public var listFeedback:ArrayCollection;
+			
+			[Bindable]public var selectFeedback:FeedbackVO;
+		]]>
+	</fx:Script>
+		
+	<s:VGroup width="100%">
+		<s:SkinnableContainer id="title" width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0">
+			<s:layout>
+				<s:HorizontalLayout verticalAlign="middle"/>
+			</s:layout>			
+			<s:Label text="案件编号：" fontWeight="bold"/>
+			<s:TextInput enabled="false" text="{comboNo.selectedItem.report.FullNO}" width="100%"/>
+			
+			<s:Label text="反馈编号：" fontWeight="bold"/>
+			<s:DropDownList id="comboNo" width="60" labelField="no" dataProvider="{listFeedback}"
+							selectedItem="{selectFeedback}"/>
+			
+			<s:Label text="反馈日期：" fontWeight="bold"/>	
+			<s:TextInput enabled="false" text="{comboNo.selectedItem.FeedbackDate}" width="100"/>
+		</s:SkinnableContainer>		
+				
+		<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0">
+			<s:layout>
+				<s:HorizontalLayout/>
+			</s:layout>
+			<s:Label paddingTop="5" text="反馈意见：" fontWeight="bold"/>
+			<s:TextArea id="textReson" width="100%" height="200" text="{comboNo.selectedItem.remark}" enabled="false"/>
+		</s:SkinnableContainer>		
+		
+		<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0">
+			<s:layout>
+				<s:HorizontalLayout/>
+			</s:layout>
+			<s:Label text="附　　件：" fontWeight="bold" paddingTop="5"/>
+			<s:Group id="group" width="60%">				
+				<s:DataGroup dataProvider="{comboNo.selectedItem.listAttach}" width="{group.width}"
+							 itemRenderer="app.view.components.subComponents.ItemRendererFeedbackStatic">
+					<s:layout>
+						<s:VerticalLayout/>
+					</s:layout>		
+				</s:DataGroup>
+			</s:Group>
+		</s:SkinnableContainer>		
+		
+		<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0">
+			<s:layout>
+				<s:HorizontalLayout horizontalAlign="center"/>
+			</s:layout>			
+			<s:Button width="100"  skinClass="skins.skinLoginButton" label="关闭" buttonDown="dispatchEvent(new Event(CLOSE));"/>
+		</s:SkinnableContainer>				
+	</s:VGroup>	
+</subComponents:BasePopupPanel>

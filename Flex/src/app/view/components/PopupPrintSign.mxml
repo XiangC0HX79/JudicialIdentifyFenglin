@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<subComponents:BasePopupPanel xmlns:fx="http://ns.adobe.com/mxml/2009"
+							  xmlns:s="library://ns.adobe.com/flex/spark"
+							  xmlns:mx="library://ns.adobe.com/flex/mx"
+							  xmlns:subComponents="app.view.components.subComponents.*" 
+							  verticalCenter="0" horizontalCenter="0"
+							  enableIcon="false" enableMinimizeButton="false"
+							  panelTitle="受理表格下载" skinClass="skins.skinBasePopupPanel" xmlns:components="app.view.components.*">
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+		<s:DateTimeFormatter id="dateF" dateTimePattern="yyyy-MM-dd"/>
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import app.model.vo.ReportVO;
+			
+			import mx.collections.ArrayCollection;
+			
+			public static const DOWNLOADSIGN:String = "downloadsign";
+			public static const DOWNLOADREPORT:String = "downloadreport";
+			public static const CLOSE:String = "close";
+			
+			[Bindable]public var dataPro:ArrayCollection;			
+		]]>
+	</fx:Script>
+	
+	<s:VGroup width="100%">	
+		<s:DataGrid dataProvider="{dataPro}" height="100%" sortableColumns="false" requestedRowCount="10">
+			<s:columns>
+				<s:ArrayList>
+					<s:GridColumn headerRenderer="app.view.components.subComponents.HeadRendererCheck"
+								  itemRenderer="app.view.components.subComponents.GridItemRendererCheck" width="25"/>
+					<s:GridColumn headerText="编号" dataField="SubNo" width="80"/>		
+					<s:GridColumn headerText="受理日期" dataField="acceptDate" width="90" formatter="{dateF}"/>		
+					<s:GridColumn headerText="委托单位" dataField="unitEntrust" width="200"/>		
+					<s:GridColumn headerText="联系人" dataField="unitPeople" width="80"/>		
+					<s:GridColumn headerText="联系方式" dataField="unitContact" width="120"/>		
+					<s:GridColumn headerText="受检人" dataField="checkedPeople" width="80"/>	
+					<s:GridColumn headerText="缴费情况" dataField="PayStatus" width="80"/>
+				</s:ArrayList>				
+			</s:columns>
+		</s:DataGrid>
+		
+		<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0">
+			<s:layout>
+				<s:HorizontalLayout horizontalAlign="center"/>
+			</s:layout>			
+			<s:Button width="100"  skinClass="skins.skinLoginButton" label="下载签收单" buttonDown="dispatchEvent(new Event(DOWNLOADSIGN));"/>
+			<s:Button width="100"  skinClass="skins.skinLoginButton" label="下载带报告" buttonDown="dispatchEvent(new Event(DOWNLOADREPORT));"/>
+			<s:Spacer width="100%"/>
+			<s:Button width="100"  skinClass="skins.skinLoginButton" label="关闭" buttonDown="dispatchEvent(new Event(CLOSE));"/>
+		</s:SkinnableContainer>	
+	</s:VGroup>
+</subComponents:BasePopupPanel>

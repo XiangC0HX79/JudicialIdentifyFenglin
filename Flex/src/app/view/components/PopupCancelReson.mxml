@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<subComponents:BasePopupPanel xmlns:fx="http://ns.adobe.com/mxml/2009"
+							  xmlns:s="library://ns.adobe.com/flex/spark"
+							  xmlns:mx="library://ns.adobe.com/flex/mx"
+							  xmlns:subComponents="app.view.components.subComponents.*"
+							  verticalCenter="0" horizontalCenter="0"
+							  width="450" height="100%" enableIcon="false" enableMinimizeButton="false"
+							  panelTitle="退案" skinClass="skins.skinBasePopupPanel">
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[			
+			import app.model.vo.ReportVO;
+			
+			import spark.events.IndexChangeEvent;
+			
+			public static const SUBMIT:String = "submit";
+			public static const CLOSE:String = "close";
+			
+			//[Bindable]public var cancelDate:String;
+			
+			[Bindable]public var report:ReportVO;
+			
+			protected function comboReson_changeHandler(event:IndexChangeEvent):void
+			{
+				if(comboReson.selectedIndex != 5)
+				{
+					textReson.text = comboReson.selectedItem;
+					textReson.enabled = false;
+				}
+				else
+				{
+					textReson.text = "";
+					textReson.enabled = true;
+				}
+			}			
+		]]>
+	</fx:Script>
+	
+	<subComponents:states>
+		<s:State name="VIEW"/>
+		<s:State name="EDIT"/>
+	</subComponents:states>
+	
+	<s:VGroup width="100%">
+		<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0.3">
+			<s:layout>
+				<s:HorizontalLayout verticalAlign="middle"/>
+			</s:layout>
+			<s:Label text="　　检案编号：" fontWeight="bold"/>
+			<s:TextInput width="100%" text="{report.FullNO}" editable="false"/>
+		</s:SkinnableContainer>		
+		
+		<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0">
+			<s:layout>
+				<s:HorizontalLayout verticalAlign="middle"/>
+			</s:layout>
+			<s:Label text="　　操作人员：" fontWeight="bold"/>
+			<s:TextInput id="textPrintName" width="100%" editable="false" text="{report.accepterName}"/>
+			<s:Label text="　　操作时间：" fontWeight="bold"/>
+			<s:TextInput id="textPrintDate" width="100%" editable="false"/>
+		</s:SkinnableContainer>		
+		
+		<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0.3" enabled="false" enabled.EDIT="true">
+			<s:layout>
+				<s:HorizontalLayout/>
+			</s:layout>
+			<s:Label text="退案原因：" fontWeight="bold"/>
+			<s:VGroup width="100%">
+				<s:DropDownList id="comboReson" width="100%" requireSelection="true" change="comboReson_changeHandler(event)">
+					<s:ArrayCollection>
+						<fx:String>缺身份证</fx:String>
+						<fx:String>缺影像资料</fx:String>
+						<fx:String>缺当天病史</fx:String>
+						<fx:String>缺复查病史</fx:String>
+						<fx:String>缺报告</fx:String>
+						<fx:String>其它</fx:String>
+					</s:ArrayCollection>
+				</s:DropDownList>
+				<s:TextArea id="textReson" width="100%" height="200"/>				
+			</s:VGroup>
+		</s:SkinnableContainer>	
+				
+		<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0">
+			<s:layout>
+				<s:HorizontalLayout horizontalAlign="center"/>
+			</s:layout>			
+			<s:Button width="100"  skinClass="skins.skinLoginButton" label="提交" buttonDown="dispatchEvent(new Event(SUBMIT));"
+					  enabled="false" enabled.EDIT="true"/>	
+			<s:Spacer width="100%"/>
+			<s:Button width="100"  skinClass="skins.skinLoginButton" label="关闭" buttonDown="dispatchEvent(new Event(CLOSE));"/>
+		</s:SkinnableContainer>				
+	</s:VGroup>	
+</subComponents:BasePopupPanel>

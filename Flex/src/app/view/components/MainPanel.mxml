@@ -1,0 +1,536 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:subComponents="app.view.components.subComponents.*" xmlns:components="app.view.components.*">
+	
+	<fx:Script>
+		<![CDATA[
+			import app.model.dict.GroupDict;
+			import app.model.dict.ReportStatusDict;
+			import app.model.dict.SendStatusDict;
+			import app.model.vo.ReportVO;
+			
+			import mx.collections.ArrayCollection;
+			import mx.events.FlexEvent;
+			
+			import spark.components.gridClasses.GridItemRenderer;
+			import spark.components.supportClasses.ItemRenderer;
+			import spark.events.GridEvent;
+			import spark.events.RendererExistenceEvent;
+			import spark.skins.spark.DefaultGridItemRenderer;
+			
+			public static const EXIT:String = "exit";
+			
+			public static const CASEACCEPT:String = "caseaccept";
+			public static const CASESTATIS:String = "casestatis";
+			public static const FEEDBACK:String = "feedback";
+			public static const SYSMANAGER:String = "sysmanager";
+						
+			public static const REPORTSEARCH:String = "reportsearch";			
+			public static const REPORTFILTER:String = "reportfilter";
+			
+			public static const REPORTINFO:String = "reportinfo";
+			
+			public static const REPORTFINANCIAL:String = "reportfinancial";
+			public static const REPORTCONSULT:String = "reportconsult";
+			public static const REPORTPRINT:String = "reportprint";
+			public static const REPORTFIRSTEXAMINE:String = "reportfirstexamine";
+			public static const REPORTLASTEXAMINE:String = "reportlasstexamine";
+			public static const REPORTREVISION:String = "reportrevision";
+			public static const REPORTBINDING:String = "reportbinding";
+			public static const REPORTSIGN:String = "reportsign";
+			public static const REPORTSEND:String = "reportsend";
+			public static const REPORTFILE:String = "reportfile";
+			public static const REPORTFEEDBACK:String = "reportfeedback";
+			
+			public static const REPORTBACK:String = "reportback";
+			public static const REPORTCANCEL:String = "reportcancel";
+						
+			public static const PRINTACCEPT:String = "printaccept";			
+			public static const PRINTFINANCIAL:String = "printfinancial";
+			
+			//[Bindable]public var listReport:ArrayCollection = new ArrayCollection;			
+			
+			protected function gridReport_gridClickHandler(event:GridEvent):void
+			{
+				var item:ReportVO  = event.item as ReportVO;
+				
+				var itemRenderer:DefaultGridItemRenderer = event.itemRenderer as DefaultGridItemRenderer;
+				
+				if((event.rowIndex < 0) || (event.columnIndex <= 0))
+					return;
+				
+				if(itemRenderer.label == "")
+					return;
+				
+				if(event.column.headerText == "缴费情况") 
+				{
+					dispatchEvent(new Event(REPORTFINANCIAL));
+				}
+				else if(event.column.headerText == "案件受理") 
+				{
+					dispatchEvent(new Event(REPORTINFO));
+				}
+				else if(event.column.headerText == "案件会诊")
+				{
+					dispatchEvent(new Event(REPORTCONSULT));
+				}
+				else if(event.column.headerText == "打印初稿")
+				{
+					dispatchEvent(new Event(REPORTPRINT));
+				}
+				else if(event.column.headerText == "案件初审")
+				{
+					dispatchEvent(new Event(REPORTFIRSTEXAMINE));
+				}
+				else if(event.column.headerText == "法医复核")
+				{
+					dispatchEvent(new Event(REPORTLASTEXAMINE));
+				}
+				else if(event.column.headerText == "修订稿件")
+				{
+					dispatchEvent(new Event(REPORTREVISION));
+				}
+				else if(event.column.headerText == "装订终稿")
+				{
+					dispatchEvent(new Event(REPORTBINDING));
+				}
+				else if(event.column.headerText == "法医签字")
+				{
+					dispatchEvent(new Event(REPORTSIGN));
+				}
+				else if(event.column.headerText == "发放报告")
+				{
+					dispatchEvent(new Event(REPORTSEND));
+				}
+				else if(event.column.headerText == "归档")
+				{
+					dispatchEvent(new Event(REPORTFILE));
+				}
+				else if(event.column.headerText == "跟踪反馈")
+				{
+					dispatchEvent(new Event(REPORTFEEDBACK));
+				}
+				else 
+				{
+					if(item.ReportStatus.label == "重新受理")
+					{
+						dispatchEvent(new Event(REPORTBACK));
+					}
+					else if(item.ReportStatus.label == "受理")
+					{
+						dispatchEvent(new Event(REPORTINFO));						
+					}
+					else if(item.ReportStatus.label == "会诊")
+					{
+						dispatchEvent(new Event(REPORTCONSULT));						
+					}
+					else if(item.ReportStatus.label == "打印")
+					{
+						dispatchEvent(new Event(REPORTPRINT));
+					}
+					else if(item.ReportStatus.label == "初审")
+					{
+						dispatchEvent(new Event(REPORTFIRSTEXAMINE));
+					}
+					else if(item.ReportStatus.label == "复审")
+					{
+						dispatchEvent(new Event(REPORTLASTEXAMINE));
+					}
+					else if(item.ReportStatus.label == "修订")
+					{
+						dispatchEvent(new Event(REPORTREVISION));
+					}
+					else if(item.ReportStatus.label == "装订")
+					{
+						dispatchEvent(new Event(REPORTBINDING));
+					}
+					else if(item.ReportStatus.label == "签字")
+					{
+						dispatchEvent(new Event(REPORTSIGN));
+					}
+					else if(item.ReportStatus.label == "发放及归档")
+					{
+						dispatchEvent(new Event(REPORTSEND));
+					}
+					else if(item.ReportStatus.label == "案件取消")
+					{
+						dispatchEvent(new Event(REPORTCANCEL));
+					}
+					else if(item.ReportStatus.label == "完成")
+					{
+						dispatchEvent(new Event(REPORTFILE));
+					}
+				}
+			}
+									
+			protected function buttonReset_buttonDownHandler(event:FlexEvent):void
+			{				
+				this.comboTime.selectedIndex = 0;
+				this.comboYear.selectedIndex = 1;
+				this.comboMonthYear.selectedIndex = 0;
+				this.comboMonth.selectedIndex = (new Date).month;
+								
+				for each(var group:GroupDict in this.dataGroupGroup.dataProvider)
+				{
+					group.selected = true;
+				}
+				
+				for each(var reportStatus:ReportStatusDict in this.dataGroupStatus.dataProvider)
+				{
+					reportStatus.selected = true;
+				}
+				
+				this.checkFilter.selected = true;
+				
+				this.textNo.text = "";
+				this.textChechPeople.text = "";
+				this.textUnit.text = "";
+				this.textPeople.text = "";
+				
+				this.dateBegin.selectedDate = new Date;
+				this.dateEnd.selectedDate = new Date;
+				
+				this.checkFeedback.selected = false;
+				
+				this.checkDebt.selected = false;				
+				this.checkCommision.selected = false;
+				
+				dispatchEvent(new Event(REPORTSEARCH));
+			}	
+			
+			public function get sDateBegin():String
+			{
+				var date:Date;
+				
+				if(comboTime.selectedIndex == 0)
+				{
+					if(comboYear.selectedIndex > 0)
+						date = new Date(Number(comboYear.selectedItem),0,1);
+				}
+				else if(comboTime.selectedIndex == 1)
+				{
+					date = new Date(Number(comboMonthYear.selectedItem),comboMonth.selectedIndex ,1);
+				}
+				else
+				{
+					date = new Date(this.dateBegin.selectedDate.fullYear,this.dateBegin.selectedDate.month,this.dateBegin.selectedDate.date)
+				}
+				
+				return (date == null)?"":this.dateTimeFormatter.format(date);
+			}
+			
+			public function get sDateEnd():String
+			{
+				var date:Date;
+				
+				if(comboTime.selectedIndex == 0)
+				{
+					if(comboYear.selectedIndex > 0)
+						date = new Date(Number(comboYear.selectedItem)+1 , 0 ,1);
+				}
+				else if(comboTime.selectedIndex == 1)
+				{
+					date = new Date(Number(comboMonthYear.selectedItem),comboMonth.selectedIndex + 1,1);
+				}
+				else
+				{
+					date = new Date(this.dateEnd.selectedDate.fullYear,this.dateEnd.selectedDate.month,this.dateEnd.selectedDate.date);
+				}
+				
+				return (date == null)?"":this.dateTimeFormatter.format(date);
+			}
+			
+			protected function rendererAddHandler(event:RendererExistenceEvent):void
+			{
+				var itemRenderer:ItemRenderer = event.renderer as ItemRenderer;
+				itemRenderer.addEventListener(MouseEvent.CLICK,onRendererClick);
+			}
+			
+			private function onRendererClick(event:MouseEvent):void
+			{	
+				var checked:Boolean = true;
+				for each(var group:GroupDict in this.dataGroupGroup.dataProvider)
+				{
+					checked &&= group.selected;
+				}
+				checkBoxType.selected = checked;
+				
+				checked = true;	
+				for each(var reportStatus:ReportStatusDict in this.dataGroupStatus.dataProvider)
+				{
+					checked &&= reportStatus.selected;
+				}
+				checkBoxStatus.selected = checked;
+				
+				dispatchEvent(new Event(REPORTFILTER));
+			}
+			
+			protected function checkboxType_changeHandler(event:Event):void
+			{
+				var checkBox:CheckBox = event.currentTarget as CheckBox;
+				
+				for each(var group:GroupDict in this.dataGroupGroup.dataProvider)
+				{
+					group.selected = checkBox.selected;
+				}
+				
+				dispatchEvent(new Event(REPORTFILTER));
+			}
+						
+			protected function checkboxStatus_changeHandler(event:Event):void
+			{
+				var checkBox:CheckBox = event.currentTarget as CheckBox;
+								
+				for each(var reportStatus:ReportStatusDict in this.dataGroupStatus.dataProvider)
+				{
+					reportStatus.selected = checkBox.selected;
+				}
+				
+				dispatchEvent(new Event(REPORTFILTER));
+			}
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+		<s:DateTimeFormatter id="dateTimeFormatter" dateTimePattern="yyyy-MM-dd"/>
+	</fx:Declarations>	
+		
+	<s:Image y="0" x="0" 
+			 source="@Embed('assets/image/title_1.png')"/>
+	<s:Image y="0" left="609" right="0" scaleMode="stretch"
+			 source="@Embed('assets/image/title_2.png')"/>
+	<s:HGroup id="menu" y="17" right="50" gap="0">		
+		<s:Button id="btnCaseAccept" width="118" height="89" skinClass="skins.skinMenuAJSLButton"
+				  buttonDown="dispatchEvent(new Event(CASEACCEPT));"/>
+		<s:Button width="118" height="89" skinClass="skins.skinMenuZHTJButton"
+				  buttonDown="dispatchEvent(new Event(CASESTATIS));"/>
+		<s:Button id="btnFeedback" width="118" height="89" skinClass="skins.skinMenuGZFKButton"
+				  buttonDown="dispatchEvent(new Event(FEEDBACK));"/>
+		<s:Button width="118" height="89" skinClass="skins.skinMenuXTGLButton"
+				  buttonDown="dispatchEvent(new Event(SYSMANAGER));"/>
+		<s:Button width="118" height="89" skinClass="skins.skinMenuTCXTButton"
+				  buttonDown="dispatchEvent(new Event(EXIT));"/>
+	</s:HGroup>	
+	
+	<s:Image top="117" bottom="0" left="0" right="0" scaleMode="stretch" 
+			 source="@Embed('assets/image/mainback.png')"/>
+		
+	<components:ToolBarMessage id="toolbarMessage" left="0" right="0" top="117" height="25"/>
+				
+	<s:Scroller id="scrollTop" left="0" right="0" top="{toolbarMessage.y + toolbarMessage.height}" height="150" verticalScrollPolicy="off">
+		<s:HGroup paddingBottom="2" paddingLeft="2" paddingRight="2" paddingTop="2" id="panelHead">		
+			<s:SkinnableContainer skinClass="skins.skinHeadPanel" height="135" width="80">
+				<s:VGroup height="100%" horizontalAlign="center" width="100%">					
+					<s:Button label="查询" icon="@Embed('assets/image/btn_find.png')"
+							  buttonDown="dispatchEvent(new Event(REPORTFILTER));"/>
+					<s:Button label="重置" icon="@Embed('assets/image/btn_back.png')"
+							  buttonDown="buttonReset_buttonDownHandler(event)"/>
+					<s:Button label="刷新" icon="@Embed('assets/image/btn_refresh.png')"
+							  buttonDown="dispatchEvent(new Event(REPORTSEARCH));"/>
+				</s:VGroup>
+				<mx:HRule width="100%"/>	
+				<s:HGroup horizontalAlign="center" verticalAlign="middle" height="25" width="100%">
+					<s:Label text="操作" fontWeight="bold"/>
+				</s:HGroup>
+			</s:SkinnableContainer>
+			
+			<s:SkinnableContainer skinClass="skins.skinHeadPanel" height="135" width="185">
+				<s:HGroup verticalAlign="middle" width="100%">
+					<s:Label text="查询时段："/>
+					<s:DropDownList id="comboTime" requireSelection="true" change="dispatchEvent(new Event(REPORTSEARCH));"
+									width="100%">
+						<s:ArrayCollection>
+							<fx:String>按年度</fx:String>
+							<fx:String>按月份</fx:String>
+							<fx:String>自定义</fx:String>
+						</s:ArrayCollection>
+					</s:DropDownList>				
+				</s:HGroup>			
+				
+				<mx:ViewStack selectedIndex="{comboTime.selectedIndex}" width="100%" creationPolicy="all" height="100%">
+					<s:NavigatorContent width="100%">	
+						<s:HGroup verticalAlign="middle" height="100%" width="100%">
+							<s:Label text="年份列表："/>
+							<s:DropDownList id="comboYear" change="dispatchEvent(new Event(REPORTSEARCH));"
+											width="100%"/>
+						</s:HGroup>
+					</s:NavigatorContent>
+					<s:NavigatorContent width="100%">
+						<s:VGroup width="100%">
+							<s:HGroup verticalAlign="middle" width="100%">
+								<s:Label text="年份列表："/>
+								<s:DropDownList id="comboMonthYear" change="dispatchEvent(new Event(REPORTSEARCH));"
+												width="100%"/>
+							</s:HGroup>
+							<s:HGroup verticalAlign="middle" width="100%">
+								<s:Label text="月份列表："/>
+								<s:DropDownList id="comboMonth" change="dispatchEvent(new Event(REPORTSEARCH));"
+												width="100%">
+									<s:ArrayCollection>
+										<fx:String>一月</fx:String>
+										<fx:String>二月</fx:String>
+										<fx:String>三月</fx:String>
+										<fx:String>四月</fx:String>
+										<fx:String>五月</fx:String>
+										<fx:String>六月</fx:String>
+										<fx:String>七月</fx:String>
+										<fx:String>八月</fx:String>
+										<fx:String>九月</fx:String>
+										<fx:String>十月</fx:String>
+										<fx:String>十一月</fx:String>
+										<fx:String>十二月</fx:String>
+									</s:ArrayCollection>
+								</s:DropDownList>
+							</s:HGroup>
+						</s:VGroup>
+					</s:NavigatorContent>
+					<s:NavigatorContent width="100%">
+						<s:VGroup>
+							<s:HGroup verticalAlign="middle" width="100%">
+								<s:Label text="开始日期："/>
+								<mx:DateField id="dateBegin" width="100%" dayNames="['日', '一', '二', '三', '四', '五', '六']"
+											  formatString="YYYY-MM-DD" selectedDate="{new Date}"
+											  monthNames="['一月', '二月', '三月', '四月', '五月',     '六月', '七月', '八月', '九月', '十月', '十一月','十二月']"
+											  change="dispatchEvent(new Event(REPORTSEARCH));"/>
+							</s:HGroup>
+							<s:HGroup verticalAlign="middle" width="100%">
+								<s:Label text="结束日期："/>
+								<mx:DateField id="dateEnd" width="100%" dayNames="['日', '一', '二', '三', '四', '五', '六']"
+											  formatString="YYYY-MM-DD" selectedDate="{new Date}"
+											  monthNames="['一月', '二月', '三月', '四月', '五月',
+											  '六月', '七月', '八月', '九月', '十月', '十一月','十二月']"
+											  change="dispatchEvent(new Event(REPORTSEARCH));"/>
+							</s:HGroup>
+						</s:VGroup>
+					</s:NavigatorContent>
+				</mx:ViewStack>
+				<mx:HRule width="100%"/>	
+				<s:HGroup width="100%" horizontalAlign="center" verticalAlign="middle" height="25">
+					<s:Label text="受理日期" fontWeight="bold"/>
+				</s:HGroup>
+			</s:SkinnableContainer>
+			
+			<s:SkinnableContainer skinClass="skins.skinHeadPanel" height="135">					
+				<s:DataGroup width="150" height="100%" id="dataGroupGroup" rendererAdd="rendererAddHandler(event)"
+							 itemRenderer="app.view.components.subComponents.ItemRendererGroup">
+					<s:layout>
+						<s:TileLayout columnAlign="justifyUsingWidth" 
+									  paddingTop="2" paddingBottom="2"/>
+					</s:layout>			
+				</s:DataGroup>
+				<mx:HRule width="100%"/>	
+				<s:HGroup width="100%" horizontalAlign="center" verticalAlign="middle" height="25">
+					<s:CheckBox id="checkBoxType" selected="true" change="checkboxType_changeHandler(event)"/>
+					<s:Label text="案件类型" fontWeight="bold"/>
+				</s:HGroup>
+			</s:SkinnableContainer>
+			
+			<s:SkinnableContainer skinClass="skins.skinHeadPanel" height="135">	
+				<s:Scroller height="100%">
+					<s:DataGroup width="300" id="dataGroupStatus" rendererAdd="rendererAddHandler(event)"
+								 itemRenderer="app.view.components.subComponents.ItemRendererGroup">
+						<s:layout>
+							<s:TileLayout columnAlign="justifyUsingWidth" 
+										  paddingTop="2" paddingBottom="2"/>
+						</s:layout>			
+					</s:DataGroup>
+				</s:Scroller>
+				<mx:HRule width="100%"/>	
+				<s:HGroup width="100%" horizontalAlign="center" verticalAlign="middle" height="25">
+					<s:CheckBox id="checkBoxStatus" selected="true" change="checkboxStatus_changeHandler(event)"/>
+					<s:Label text="案件状态" fontWeight="bold"/>
+				</s:HGroup>
+			</s:SkinnableContainer>
+			
+			<s:SkinnableContainer skinClass="skins.skinHeadPanel" height="135" width="330">	
+				<s:VGroup height="100%" width="100%">
+					<s:HGroup verticalAlign="middle" width="100%">						
+						<s:Label text="编　　号："/>
+						<s:TextInput id="textNo" width="80"/>
+						<s:Label text="受检人："/>
+						<s:TextInput id="textChechPeople" width="100%"/>
+					</s:HGroup>
+					<s:HGroup verticalAlign="middle" width="100%">	
+						<s:Label text="委托单位："/>
+						<s:TextInput id="textUnit" width="100%" prompt="输入'缺委托书'可查询单位为空的案件"/>
+					</s:HGroup>		
+					<s:HGroup verticalAlign="middle" width="100%">	
+						<s:Label text="委托联系人："/>
+						<s:TextInput id="textPeople" width="100%"/>
+						<s:Label text="待处理案件："/>
+						<s:CheckBox id="checkFilter"
+									selected="true"
+									change="dispatchEvent(new Event(REPORTFILTER));"/>
+					</s:HGroup>		
+				</s:VGroup>
+				<mx:HRule width="100%"/>	
+				<s:HGroup width="100%" horizontalAlign="center" verticalAlign="middle" height="25">
+					<s:Label text="其他" fontWeight="bold"/>
+				</s:HGroup>
+			</s:SkinnableContainer>
+			
+			<s:SkinnableContainer skinClass="skins.skinHeadPanel" height="135" id="panelAccept">	
+				<s:VGroup height="100%">					
+					<s:HGroup verticalAlign="middle">
+						<s:Label text="跟踪反馈："/>
+						<s:CheckBox id="checkFeedback"
+									selected="false"
+									change="dispatchEvent(new Event(REPORTFILTER));"/>						
+					</s:HGroup>
+				</s:VGroup>
+				<s:Button icon="@Embed('assets/image/btn_down.png')" label="受理表格下载"
+						  buttonDown="dispatchEvent(new Event(PRINTACCEPT));"/>
+				<mx:HRule width="100%"/>	
+				<s:HGroup width="100%" horizontalAlign="center" verticalAlign="middle" height="25">
+					<s:Label text="案件受理" fontWeight="bold"/>
+				</s:HGroup>
+			</s:SkinnableContainer>
+			
+			<s:SkinnableContainer skinClass="skins.skinHeadPanel" height="135" id="panelFinancial">	
+				<s:VGroup height="100%">	
+					<subComponents:BaseCheckBox label="欠　　费：" id="checkDebt" skinClass="skins.skinBaseCheckBox"
+												change="dispatchEvent(new Event(REPORTFILTER));"/>	
+					<subComponents:BaseCheckBox label="返　　佣：" id="checkCommision" skinClass="skins.skinBaseCheckBox"
+												change="dispatchEvent(new Event(REPORTFILTER));"/>	
+					<subComponents:BaseCheckBox label="开　　票：" id="checkBill" skinClass="skins.skinBaseCheckBox"
+								change="dispatchEvent(new Event(REPORTFILTER));"/>	
+				</s:VGroup>
+				<s:Button icon="@Embed('assets/image/btn_down.png')" label="财务表格下载"
+						  buttonDown="dispatchEvent(new Event(PRINTFINANCIAL));"/>
+				<mx:HRule width="100%"/>	
+				<s:HGroup width="100%" horizontalAlign="center" verticalAlign="middle" height="25">
+					<s:Label text="财务" fontWeight="bold"/>
+				</s:HGroup>
+			</s:SkinnableContainer>				
+		</s:HGroup>		
+	</s:Scroller>
+	
+	<s:DataGrid id="gridReport" left="0" right="0" top="{scrollTop.y + scrollTop.height}" bottom="0"
+				gridClick="gridReport_gridClickHandler(event)"  buttonMode="true" useHandCursor="true">
+		<s:columns>
+			<s:ArrayList>
+				<s:GridColumn headerText="提醒" width="45" itemRenderer="app.view.components.subComponents.GridItemRendererReportAlert"/>
+				<s:GridColumn headerText="年度" dataField="year" width="45"/>
+				<s:GridColumn headerText="类型" dataField="Group.label" width="55"/>
+				<s:GridColumn headerText="编号" dataField="SubNo" width="45"/>
+				<s:GridColumn headerText="状态" dataField="ReportStatus.label" width="80"/>
+				<s:GridColumn headerText="时限" dataField="FinishType" width="45"/>
+				<s:GridColumn headerText="受检人" dataField="checkedPeople" width="80"/>
+				<s:GridColumn headerText="缴费情况" dataField="PayStatus" width="80"/>
+				<s:GridColumn headerText="案件受理" dataField="AcceptDate" minWidth="90"/>
+				<s:GridColumn headerText="案件会诊" dataField="ConsultDate" minWidth="90"/>
+				<s:GridColumn headerText="打印初稿" dataField="PrintDate" minWidth="90"/>
+				<s:GridColumn headerText="案件初审" dataField="FirstExamineDate" minWidth="90"/>
+				<s:GridColumn headerText="法医复核" dataField="LastExamineDate" minWidth="90"/>
+				<s:GridColumn headerText="修订稿件" dataField="RevisionDate" minWidth="90"/>
+				<s:GridColumn headerText="装订终稿" dataField="BindingDate" minWidth="90"/>
+				<s:GridColumn headerText="法医签字" dataField="SignDate" minWidth="90"/>
+				<s:GridColumn headerText="发放报告" dataField="SendDate" minWidth="90"/>
+				<s:GridColumn headerText="归档" dataField="FileDate" minWidth="90"/>
+				<s:GridColumn headerText="跟踪反馈" dataField="feedbackNum" minWidth="80"/>
+			</s:ArrayList>
+		</s:columns>		
+	</s:DataGrid>
+</s:Group>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx"		   
+			   xmlns:components="app.view.components.*"
+			   creationComplete="facade.startup(this)" 
+			   preloader="app.view.components.subComponents.AppDownloadProgressBar" 
+			   fontSize="14"
+			   fontFamily="微软雅黑">
+	
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import app.ApplicationFacade;
+			
+			private var facade:ApplicationFacade = ApplicationFacade.getInstance();			
+		]]>
+	</fx:Script>
+	
+	<s:Group  left="0" top="0" right="0" bottom="0">
+		<components:MainPanel id="mainPanel" width="100%" height="100%"/>
+	</s:Group>
+	
+	<components:Login id="login" left="0" top="0" right="0" bottom="0"/>
+	
+	<components:PopupManager id="popupManager" left="0" top="0" right="0" bottom="0" visible="false"/>
+	
+	<components:AppLoadingBar id="appLoadingBar"  left="0" top="0" right="0" bottom="0"/>
+</s:Application>

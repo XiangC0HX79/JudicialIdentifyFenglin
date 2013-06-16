@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="utf-8"?>
+<subComponents:BasePopupPanel xmlns:fx="http://ns.adobe.com/mxml/2009"
+							  xmlns:s="library://ns.adobe.com/flex/spark"
+							  xmlns:mx="library://ns.adobe.com/flex/mx"
+							  xmlns:subComponents="app.view.components.subComponents.*"
+							  verticalCenter="0" horizontalCenter="0"
+							  width="650" height="100%"
+							  enableIcon="false" enableMinimizeButton="false"
+							  panelTitle="案件受理" skinClass="skins.skinBasePopupPanel" xmlns:components="app.view.components.*">
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import app.model.vo.ReportVO;
+			import app.model.vo.UserVO;
+			
+			import mx.events.FlexEvent;
+			
+			import spark.components.ComboBox;
+			import spark.events.IndexChangeEvent;
+			
+			public static const SUBMIT:String = "submit";
+			public static const PRINT:String = "print";
+			public static const CONSULT:String = "consult";
+			public static const CANCEL:String = "cancel";
+						
+			public static const CLOSE:String = "close";
+			
+			public static const LISTGROUPCHANGE:String = "listgroupchange";
+			public static const DATEACCEPTCHANGE:String = "dateacceptchange";
+			public static const COMBOUNITCHANGE:String = "combounitchange";
+			public static const COMBOPEOPLECHANGE:String = "combopeoplechange";
+			
+			[Bindable]public var listGroup:ArrayCollection = null;
+			[Bindable]public var listAcceptAddress:ArrayCollection = null;
+			
+			[Bindable]public var listEntrustUnit:ArrayCollection = null;
+			[Bindable]public var listEntrustPeople:ArrayCollection = null;
+			
+			[Bindable]public var listAccepterA:ArrayCollection = null;
+			[Bindable]public var accepterA:UserVO;
+			[Bindable]public var listAccepterB:ArrayCollection = null;
+			[Bindable]public var accepterB:UserVO;
+			[Bindable]public var listAccepterC:ArrayCollection = null;
+			[Bindable]public var accepterC:UserVO;
+			
+			[Bindable]public var listPrinter:ArrayCollection = null;
+			
+			[Bindable]public var listAttach:ArrayCollection = null;
+			
+			[Bindable]public var report:ReportVO;
+			
+			[Bindable]public var editable:Boolean = true;	
+			
+			[Bindable]public var jurisdiction:Boolean = false;		
+			
+			private function matchingFunction(comboBox:ComboBox, inputText:String):Vector.<int>
+			{
+				var matchingItems:Vector.<int> = new Vector.<int>;
+				return matchingItems;
+			}
+		]]>
+	</fx:Script>
+		
+	<s:VGroup width="100%">
+		<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0.3"
+							  enabled="{editable || jurisdiction}">
+			<s:layout>
+				<s:HorizontalLayout verticalAlign="middle"/>
+			</s:layout>
+			<s:HGroup width="120" verticalAlign="middle">				
+				<s:Label text="年　　度：" fontWeight="bold"/>
+				<s:TextInput width="100%" enabled="false" id="textReportYear" text="{report.year}"/>	
+			</s:HGroup>
+			<s:HGroup width="100%" verticalAlign="middle">				
+				<s:Label text="编　　号：" fontWeight="bold"/>
+				<s:DropDownList id="comboGroup" width="80" dataProvider="{listGroup}" selectedIndex="{report.type}"
+								requireSelection="true" change="dispatchEvent(new Event(LISTGROUPCHANGE));"/>
+				<s:TextInput width="100%" enabled="false" id="textReportNo" text="{report.subNo}"/>	
+			</s:HGroup>
+			<s:HGroup width="100%" verticalAlign="middle">		
+				<s:Label text="受理日期：" fontWeight="bold"/>
+				<mx:DateField width="100%" id="dateAccept" selectedDate="{report.acceptDate}"
+							  dayNames="['日', '一', '二', '三', '四', '五', '六']"
+							  formatString="YYYY-MM-DD" change="dispatchEvent(new Event(DATEACCEPTCHANGE));"
+							  monthNames="['一月', '二月', '三月', '四月', '五月',
+							  '六月', '七月', '八月', '九月', '十月', '十一月','十二月']"/>
+			</s:HGroup>
+		</s:SkinnableContainer>			
+		
+		<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0" enabled="{editable || jurisdiction}">
+			<s:layout>
+				<s:HorizontalLayout verticalAlign="middle"/>
+			</s:layout>
+			<s:Label text="委托单位：" fontWeight="bold"/>
+			<subComponents:BaseComboBox width="100%" dataProvider="{listEntrustUnit}" id="comboEntrustUnit" 
+						selectedItem="{report.unitEntrust}"
+						textchange="dispatchEvent(new Event(COMBOUNITCHANGE));"
+						itemMatchingFunction="matchingFunction"/>
+		</s:SkinnableContainer>			
+				
+		<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0.3" enabled="{editable || jurisdiction}">
+			<s:layout>
+				<s:HorizontalLayout verticalAlign="middle"/>
+			</s:layout>			
+			<s:HGroup width="50%" verticalAlign="middle">	
+				<s:Label text="委托联系人：" fontWeight="bold"/>
+				<subComponents:BaseComboBox width="100%" dataProvider="{listEntrustPeople}" id="comboEntrustPeople" 
+							selectedItem="{report.unitPeople}"
+							textchange="dispatchEvent(new Event(COMBOPEOPLECHANGE));"
+							itemMatchingFunction="matchingFunction"/>
+			</s:HGroup>
+			<s:HGroup width="50%" verticalAlign="middle">	
+				<s:Label text="联系方式：" fontWeight="bold"/>
+				<s:TextInput width="100%" id="textUnitContact" text="{report.unitContact}"/>
+			</s:HGroup>
+		</s:SkinnableContainer>		
+				
+		<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0" enabled="{editable || jurisdiction}">
+			<s:layout>
+				<s:HorizontalLayout verticalAlign="middle"/>
+			</s:layout>
+			<s:HGroup width="50%" verticalAlign="middle">	
+				<s:Label text="　受检人：" fontWeight="bold"/>
+				<s:TextInput width="100%" id="textCheckedPeople" text="{report.checkedPeople}"/>
+			</s:HGroup>
+			<s:HGroup width="50%" verticalAlign="middle">	
+				<s:Label text="受检人联系方式：" fontWeight="bold"/>
+				<s:TextInput width="100%" id="textCheckedContact" text="{report.checkedContact}"/>
+			</s:HGroup>
+		</s:SkinnableContainer>		
+		
+		<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0.3" enabled="{editable || jurisdiction}">
+			<s:layout>
+				<s:HorizontalLayout verticalAlign="middle"/>
+			</s:layout>			
+			<s:HGroup width="100%" verticalAlign="middle">	
+				<s:Label text="受理地点：" fontWeight="bold"/>
+				<s:DropDownList id="comboAcceptAddress" labelField="label" width="100%"
+								 selectedIndex="{report.accepterAddress}" 
+								dataProvider="{listAcceptAddress}" requireSelection="true"/>
+			</s:HGroup>		
+			<s:HGroup width="100%" verticalAlign="middle">	
+				<s:Label text="案件类型：" fontWeight="bold"/>
+				<s:DropDownList id="comboAcceptType" width="100%"
+								selectedItem = "{report.accepterType}" 
+								requireSelection="true">
+					<s:dataProvider> 
+						<s:ArrayCollection>
+							<fx:String>临床</fx:String>
+							<fx:String>精神</fx:String>
+						</s:ArrayCollection>
+					</s:dataProvider>
+				</s:DropDownList>
+			</s:HGroup>
+			<s:HGroup width="100%" verticalAlign="middle">	
+				<s:Label text="影像资料：" fontWeight="bold"/>
+				<s:NumericStepper id="numImageCount" width="100%" value="{report.imageCount}"/>
+				<s:Label text="张"/>
+			</s:HGroup>
+		</s:SkinnableContainer>	
+		
+		<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0.3" enabled="{editable || jurisdiction}">
+			<s:layout>
+				<s:HorizontalLayout verticalAlign="middle"/>
+			</s:layout>			
+			<s:Label text=" 受理人A：" fontWeight="bold"/>
+			<s:DropDownList width="100%" id="comboAccepterA" requireSelection="true" labelField="name" 
+						dataProvider="{listAccepterA}" selectedItem="{accepterA}"/>
+			<s:Label text="受理人B：" fontWeight="bold"/>
+			<s:DropDownList width="100%" id="comboAccepterB" requireSelection="true" labelField="name" 
+						dataProvider="{listAccepterB}" selectedItem="{accepterB}"/>
+			<s:Label text="受理人C：" fontWeight="bold"/>
+			<s:DropDownList width="100%" id="comboAccepterC" requireSelection="true" labelField="name" 
+						dataProvider="{listAccepterC}" selectedItem="{accepterC}"/>
+		</s:SkinnableContainer>		
+		
+		<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0" enabled="{editable || jurisdiction}">
+			<s:layout>
+				<s:HorizontalLayout verticalAlign="middle"/>
+			</s:layout>			
+			<s:Label text="预定出报告日期：" fontWeight="bold"/>
+			<mx:DateField width="100%"  selectedDate="{report.finishDate}"
+						  id="dateFinish" dayNames="['日', '一', '二', '三', '四', '五', '六']"
+						  formatString="YYYY-MM-DD"
+						  monthNames="['一月', '二月', '三月', '四月', '五月',
+						  '六月', '七月', '八月', '九月', '十月', '十一月','十二月']"/>
+			<s:DropDownList width="65" requireSelection="true" id="comboFinish" 
+							selectedIndex="{report.finishType}">
+				<s:dataProvider>
+					<s:ArrayCollection>
+						<fx:String>正常</fx:String>
+						<fx:String>加急</fx:String>
+						<fx:String>延后</fx:String>
+					</s:ArrayCollection>
+				</s:dataProvider>
+			</s:DropDownList>
+		</s:SkinnableContainer>
+				
+		<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0.3" enabled="{editable || jurisdiction}">
+			<s:layout>
+				<s:HorizontalLayout verticalAlign="middle"/>
+			</s:layout>			
+			<s:Label text="备　　注：" fontWeight="bold"/>
+			<s:TextInput width="100%" id="textRemark" text="{report.remark}"/>
+		</s:SkinnableContainer>	
+		
+		<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0" enabled="{editable}">
+			<s:layout>
+				<s:HorizontalLayout/>
+			</s:layout>
+			<s:Label text="初步照片：" fontWeight="bold" paddingTop="5"/>
+			<s:List dataProvider="{listAttach}" width="100%" height="118" horizontalScrollPolicy="on"
+						 itemRenderer="app.view.components.subComponents.ItemRendererAttach">
+				<s:layout>
+					<s:HorizontalLayout/>
+				</s:layout>		
+			</s:List>
+		</s:SkinnableContainer>		
+		
+		<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0.3" enabled="{editable || jurisdiction}">
+			<s:layout>
+				<s:VerticalLayout/>
+			</s:layout>			
+			<s:Label text="选择打印文员（点击高亮选中文员）：" fontWeight="bold" paddingTop="5"/>
+						
+			<s:DataGrid id="gridPrint" width="100%" requestedRowCount="5" dataProvider="{listPrinter}">
+				<s:columns>
+					<s:ArrayList>
+						<s:GridColumn headerText="姓名" dataField="name" width="150"/>
+						<s:GridColumn headerText="联系方式" dataField="phone"/>
+						<s:GridColumn headerText="工作数量" dataField="printCount"/>
+					</s:ArrayList>
+				</s:columns>
+			</s:DataGrid>
+		</s:SkinnableContainer>
+		
+		<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0">
+			<s:layout>
+				<s:HorizontalLayout horizontalAlign="center"/>
+			</s:layout>			
+			<s:Button width="100"  skinClass="skins.skinLoginButton" label="提交" buttonDown="dispatchEvent(new Event(SUBMIT));" enabled="{editable || jurisdiction}"/>	
+			<s:Button width="100"  skinClass="skins.skinLoginButton" label="打印" buttonDown="dispatchEvent(new Event(PRINT));" enabled="{editable}"/>	
+			<s:Button width="100"  skinClass="skins.skinLoginButton" label="会诊" buttonDown="dispatchEvent(new Event(CONSULT));" enabled="{editable}"/>	
+			<s:Button width="100"  skinClass="skins.skinLoginButton" label="退案" buttonDown="dispatchEvent(new Event(CANCEL));" enabled="{editable}"/>	
+			<s:Spacer width="100%"/>
+			<s:Button width="100"  skinClass="skins.skinLoginButton" label="关闭" buttonDown="dispatchEvent(new Event(CLOSE));"/>
+		</s:SkinnableContainer>		
+	</s:VGroup>
+</subComponents:BasePopupPanel>

@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:NavigatorContent xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					xmlns:s="library://ns.adobe.com/flex/spark" 
+					xmlns:mx="library://ns.adobe.com/flex/mx" 
+					label="缴费统计">
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			public static const SUBMIT:String = "submit";
+			
+			public static const GROUPCHANGE:String = "groupchange";
+			
+			[Bindable]public var listEntrustUnit:ArrayCollection;
+		]]>
+	</fx:Script>
+	
+	<s:layout>
+		<s:VerticalLayout paddingTop="5" paddingLeft="5" paddingBottom="5" paddingRight="5"/>
+	</s:layout>			
+	
+	<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0">
+		<s:layout>
+			<s:HorizontalLayout verticalAlign="middle"/>
+		</s:layout>			
+		
+		<s:Label text="案件类型：" fontWeight="bold"/>
+		<s:DropDownList id="comboType" width="80" change="dispatchEvent(new Event(GROUPCHANGE));"/>
+		
+		<s:Spacer width="20"/>
+		
+		<s:Label text="统计时段：" fontWeight="bold"/>
+		<s:DropDownList id="comboTime">
+			<s:ArrayCollection>
+				<fx:String>按年度</fx:String>
+				<fx:String>按月份</fx:String>
+			</s:ArrayCollection>
+		</s:DropDownList>
+		
+		<s:Spacer width="20"/>
+		
+		<mx:ViewStack selectedIndex="{comboTime.selectedIndex}" width="100%">
+			<s:NavigatorContent>
+				<s:HGroup verticalAlign="middle">
+					<s:Label text="年份列表：" fontWeight="bold"/>
+					<s:DropDownList id="comboYear"/>
+				</s:HGroup>
+			</s:NavigatorContent>
+			<s:NavigatorContent>
+				<s:HGroup verticalAlign="middle">
+					<s:Label text="年份列表：" fontWeight="bold"/>
+					<s:DropDownList id="comboMonthYear"/>
+					
+					<s:Spacer width="20"/>
+					
+					<s:Label text="月份列表：" fontWeight="bold"/>
+					<s:DropDownList id="comboMonth">
+						<s:ArrayCollection>
+							<fx:String>一月</fx:String>
+							<fx:String>二月</fx:String>
+							<fx:String>三月</fx:String>
+							<fx:String>四月</fx:String>
+							<fx:String>五月</fx:String>
+							<fx:String>六月</fx:String>
+							<fx:String>七月</fx:String>
+							<fx:String>八月</fx:String>
+							<fx:String>九月</fx:String>
+							<fx:String>十月</fx:String>
+							<fx:String>十一月</fx:String>
+							<fx:String>十二月</fx:String>
+						</s:ArrayCollection>
+					</s:DropDownList>
+				</s:HGroup>
+			</s:NavigatorContent>
+		</mx:ViewStack>
+	</s:SkinnableContainer>		
+	
+	<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0.3">
+		<s:layout>
+			<s:HorizontalLayout verticalAlign="middle"/>
+		</s:layout>			
+		<s:Label text="统计类型：" fontWeight="bold"/>
+		<s:DropDownList id="comboTypeCount" requireSelection="true" width="185">
+			<s:ArrayCollection>
+				<fx:String>按受理地点统计</fx:String>
+				<fx:String>按委托单位统计</fx:String>
+				<fx:String>按联系人统计</fx:String>
+			</s:ArrayCollection>
+		</s:DropDownList>
+		
+		<s:Spacer width="20"/>
+		
+		<mx:ViewStack selectedIndex="{comboTypeCount.selectedIndex}">
+			<s:NavigatorContent>
+				<s:HGroup verticalAlign="middle">
+					<s:Label text="受理地点列表：" fontWeight="bold"/>
+					<s:DropDownList id="comboAcceptAddress" width="200"/>
+				</s:HGroup>
+			</s:NavigatorContent>
+			<s:NavigatorContent>
+				<s:HGroup verticalAlign="middle">
+					<s:Label text="委托单位列表：" fontWeight="bold"/>
+					<s:ComboBox id="comboUnitCount" width="200" dataProvider="{listEntrustUnit}"/>
+				</s:HGroup>
+			</s:NavigatorContent>
+			<s:NavigatorContent>
+				<s:HGroup verticalAlign="middle">
+					<s:Label text="　联系人列表：" fontWeight="bold"/>
+					<s:ComboBox id="comboContactCount" width="200"/>
+				</s:HGroup>
+			</s:NavigatorContent>
+		</mx:ViewStack>
+		
+		<s:Button width="100" label="统计" skinClass="skins.skinLoginButton" buttonDown="dispatchEvent(new Event(SUBMIT))"/>
+	</s:SkinnableContainer>	
+	
+	<s:HGroup width="100%">
+		<mx:ColumnChart id="columnChart" width="100%" height="100%" gutterLeft="0" fontSize="14" fontWeight="bold">
+			<mx:horizontalAxis>
+				<mx:CategoryAxis categoryField="类别"/>
+			</mx:horizontalAxis>
+			<mx:series>
+				<mx:ColumnSeries displayName="费用" labelPosition="outside"
+								 xField="类别" yField="费用"/>
+			</mx:series>
+		</mx:ColumnChart>		
+		<s:DataGrid  id="gridReport" height="100%">
+			<s:columns>
+				<s:ArrayList>
+					<s:GridColumn headerText="年度" dataField="year" width="60"/>
+					<s:GridColumn headerText="类型" dataField="Group.label" width="70"/>
+					<s:GridColumn headerText="编号" dataField="SubNo" width="80"/>		
+					<s:GridColumn headerText="受检人" dataField="checkedPeople" width="80"/>		
+					<s:GridColumn headerText="缴费类别" width="80"/>		
+					<s:GridColumn headerText="应缴金额" dataField="payAmount" width="80"/>			
+					<s:GridColumn headerText="已缴金额" dataField="paidAmount" width="80"/>						
+				</s:ArrayList>				
+			</s:columns>
+		</s:DataGrid>
+	</s:HGroup>		
+</s:NavigatorContent>

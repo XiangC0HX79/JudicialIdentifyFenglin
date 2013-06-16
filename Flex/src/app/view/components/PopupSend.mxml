@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<subComponents:BasePopupPanel xmlns:fx="http://ns.adobe.com/mxml/2009"
+							  xmlns:s="library://ns.adobe.com/flex/spark"
+							  xmlns:mx="library://ns.adobe.com/flex/mx"
+							  xmlns:subComponents="app.view.components.subComponents.*"
+							  verticalCenter="0" horizontalCenter="0"
+							  width="650" height="100%" enableIcon="false" enableMinimizeButton="false"
+							  panelTitle="发放报告" skinClass="skins.skinBasePopupPanel">
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[		
+			import app.model.vo.ReportVO;
+			
+			import mx.collections.ArrayCollection;
+			
+			public static const ACCEPT:String = "accept";
+			public static const SUBMIT:String = "submit";
+			public static const CLOSE:String = "close";
+			public static const BACK:String = "back";
+									
+			[Bindable]public var report:ReportVO;
+						
+			[Bindable]public var listSendStatus:ArrayCollection;
+		]]>
+	</fx:Script>
+	
+	<subComponents:states>
+		<s:State name="VIEW"/>
+		<s:State name="ACCEPT"/>
+		<s:State name="EDIT"/>
+	</subComponents:states>
+	
+	<s:VGroup width="100%">
+		<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0.3">
+			<s:layout>
+				<s:HorizontalLayout verticalAlign="middle"/>
+			</s:layout>
+			<s:HGroup width="100%" verticalAlign="middle">
+				<s:Label text="受理人：" fontWeight="bold"/>
+				<s:TextInput id="textPrintName" enabled="false" width="100%" text="{report.accepterName}"/>				
+			</s:HGroup>
+			<s:HGroup width="100%" verticalAlign="middle">
+				<s:Label text="发放状态：" fontWeight="bold"/>
+				<s:DropDownList id="gridRank" 
+								enabled="false" enabled.EDIT="true"
+								width="100%" selectedIndex="{report.sendStatus - 1}"
+								dataProvider="{listSendStatus}" labelField="label"/>			
+			</s:HGroup>
+			<s:HGroup width="100%" verticalAlign="middle">
+				<s:Label text="签收日期：" fontWeight="bold"/>
+				<mx:DateField width="100%" selectedDate="{report.sendGetDate}"
+							  enabled="false" enabled.EDIT="true"
+							  id="dateGet" dayNames="['日', '一', '二', '三', '四', '五', '六']"
+							  formatString="YYYY-MM-DD"
+							  monthNames="['一月', '二月', '三月', '四月', '五月',
+							  '六月', '七月', '八月', '九月', '十月', '十一月','十二月']"/>		
+			</s:HGroup>
+		</s:SkinnableContainer>	
+		
+		<!--<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0.3">
+			<s:layout>
+				<s:HorizontalLayout verticalAlign="middle"/>
+			</s:layout>
+			<s:HGroup width="50%" verticalAlign="middle">
+				<s:Label text="签收人：" fontWeight="bold"/>
+				<s:TextInput id="textGetName" width="100%" text="{report.sendGetPeople}"
+							 enabled="false" enabled.EDIT="true"/>				
+			</s:HGroup>
+			<s:HGroup width="50%" verticalAlign="middle">
+				<s:Label text="签收日期：" fontWeight="bold"/>
+				<mx:DateField width="100%" selectedDate="{report.sendGetDate}"
+							  enabled="false" enabled.EDIT="true"
+							  id="dateGet" dayNames="['日', '一', '二', '三', '四', '五', '六']"
+							  formatString="YYYY-MM-DD"
+							  monthNames="['一月', '二月', '三月', '四月', '五月',
+							  '六月', '七月', '八月', '九月', '十月', '十一月','十二月']"/>		
+			</s:HGroup>
+		</s:SkinnableContainer>		-->
+		
+		<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0">
+			<s:layout>
+				<s:HorizontalLayout verticalAlign="middle"/>
+			</s:layout>
+			<s:Label id="labelTitle" text="请确保：" fontWeight="bold"/>
+			<s:Label text="1.签字无遗漏。"/>
+		</s:SkinnableContainer>				
+		
+		<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0.3">
+			<s:layout>
+				<s:HorizontalLayout verticalAlign="middle"/>
+			</s:layout>
+			<s:Spacer width="{labelTitle.width}"/>
+			<s:Label text="2.盖章无差错。"/>
+		</s:SkinnableContainer>					
+		
+		<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0">
+			<s:layout>
+				<s:HorizontalLayout verticalAlign="middle"/>
+			</s:layout>
+			<s:Spacer width="{labelTitle.width}"/>
+			<s:Label text="3.严格按法医要求完成了稿件修订。"/>
+		</s:SkinnableContainer>		
+		
+		<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0.3">
+			<s:layout>
+				<s:HorizontalLayout horizontalAlign="center"/>
+			</s:layout>			
+			<s:Button width="100"  skinClass="skins.skinLoginButton" label="接受发放" buttonDown="dispatchEvent(new Event(ACCEPT));"
+					  enabled="false" enabled.ACCEPT="true"/>
+			<s:Button width="100"  skinClass="skins.skinLoginButton" label="提　　交" buttonDown="dispatchEvent(new Event(SUBMIT));"
+					  enabled="false" enabled.EDIT="true"/>
+			<s:Button width="100"  skinClass="skins.skinLoginButton" label="重新受理" buttonDown="dispatchEvent(new Event(BACK));"
+					  enabled="false" enabled.EDIT="true"/>			
+			<s:Spacer width="100%"/>
+			<s:Button width="100"  skinClass="skins.skinLoginButton" label="关闭" buttonDown="dispatchEvent(new Event(CLOSE));"/>
+		</s:SkinnableContainer>				
+	</s:VGroup>	
+</subComponents:BasePopupPanel>

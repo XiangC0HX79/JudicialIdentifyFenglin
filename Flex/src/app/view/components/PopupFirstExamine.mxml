@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<subComponents:BasePopupPanel xmlns:fx="http://ns.adobe.com/mxml/2009"
+							  xmlns:s="library://ns.adobe.com/flex/spark"
+							  xmlns:mx="library://ns.adobe.com/flex/mx"
+							  xmlns:subComponents="app.view.components.subComponents.*"
+							  verticalCenter="0" horizontalCenter="0"
+							  width="650" height="100%" enableIcon="false" enableMinimizeButton="false"
+							  panelTitle="案件初审" skinClass="skins.skinBasePopupPanel">
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[		
+			import app.AppEvent;
+			import app.model.vo.AttachVO;
+			import app.model.vo.ReportVO;
+			
+			import mx.collections.ArrayCollection;
+			
+			public static const PREVIOUS:String = "previous";
+			public static const ACCEPT:String = "accept";
+			public static const SUBMIT:String = "submit";
+			public static const CLOSE:String = "close";
+			public static const BACK:String = "back";
+						
+			public static const UPLOADDRAFT:String = "uploaddraft";
+			public static const DOWNLOADDRAFT:String = "downloaddraft";	
+			
+			public static const UPLOADPHOTO:String = "uploadphoto";
+			public static const DOWNLOADPHOTO:String = "downloadphoto";	
+			
+			[Bindable]public var report:ReportVO;
+			
+			[Bindable]public var attach:AttachVO;
+		]]>
+	</fx:Script>
+	
+	<subComponents:states>
+		<s:State name="VIEW"/>
+		<s:State name="ACCEPT"/>
+		<s:State name="EDIT"/>
+	</subComponents:states>
+	
+	<s:VGroup width="100%">
+		<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0.3">
+			<s:layout>
+				<s:HorizontalLayout verticalAlign="middle"/>
+			</s:layout>
+			<s:Label text="　初审人员：" fontWeight="bold"/>
+			<s:TextInput id="textPrintName" editable="false" width="100%" text="{report.firstExaminerName}"/>
+			<s:Label text="　初审时间：" fontWeight="bold"/>
+			<s:TextInput id="textPrintDate" editable="false" width="100%" text="{report.FirstExamineDate}"/>
+		</s:SkinnableContainer>				
+				
+		<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0.3" enabled="false" enabled.EDIT="true">
+			<s:layout>
+				<s:HorizontalLayout verticalAlign="middle"/>
+			</s:layout>
+			<s:HGroup width="100%" verticalAlign="middle">				
+				<s:Label text="鉴定意见书：" fontWeight="bold"/>
+				<s:Button label="上传" buttonDown="dispatchEvent(new Event(UPLOADDRAFT))"/>
+				<s:Button label="下载" buttonDown="dispatchEvent(new Event(DOWNLOADDRAFT))"/>
+			</s:HGroup>
+			
+			<s:HGroup width="100%" verticalAlign="middle">	
+				<s:Label text="　成型照片：" fontWeight="bold"/>
+				<s:Button label="上传" buttonDown="dispatchEvent(new Event(UPLOADPHOTO))"/>
+				<s:Button label="下载" buttonDown="dispatchEvent(new Event(DOWNLOADPHOTO))"/>
+			</s:HGroup>
+		</s:SkinnableContainer>					
+		
+		<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0" enabled="false" enabled.EDIT="true">
+			<s:layout>
+				<s:HorizontalLayout/>
+			</s:layout>
+			<s:Label text="　初步照片：" fontWeight="bold" paddingTop="5"/>
+			<s:List dataProvider="{attach.listImage}" width="100%" height="118" horizontalScrollPolicy="on"
+					itemRenderer="app.view.components.subComponents.ItemRendererAttachStatic">
+				<s:layout>
+					<s:HorizontalLayout/>
+				</s:layout>		
+			</s:List>
+		</s:SkinnableContainer>		
+		
+		<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0.3">
+			<s:layout>
+				<s:HorizontalLayout verticalAlign="middle"/>
+			</s:layout>
+			<s:Label text="　初稿评分：" fontWeight="bold"/>
+			<s:DropDownList id="gridRank" selectedIndex="{report.firstExamineRank}"
+							enabled="false" enabled.EDIT="true" 
+							skinClass="skins.skinDropDownListRank">
+				<s:ArrayCollection>
+					<fx:String>1分</fx:String>
+					<fx:String>2分</fx:String>
+					<fx:String>3分</fx:String>
+					<fx:String>4分</fx:String>
+					<fx:String>5分</fx:String>
+					<fx:String>6分</fx:String>
+					<fx:String>7分</fx:String>
+					<fx:String>8分</fx:String>
+					<fx:String>9分</fx:String>
+					<fx:String>10分</fx:String>
+				</s:ArrayCollection>
+			</s:DropDownList>
+		</s:SkinnableContainer>	
+		
+		<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0">
+			<s:layout>
+				<s:HorizontalLayout horizontalAlign="center"/>
+			</s:layout>			
+			<s:Button width="100"  skinClass="skins.skinLoginButton" label="接受初审" buttonDown="dispatchEvent(new Event(ACCEPT));"
+					  enabled="false" enabled.ACCEPT="true"/>
+			<s:Button width="100"  skinClass="skins.skinLoginButton" label="初审完毕" buttonDown="dispatchEvent(new Event(SUBMIT));"
+					  enabled="false" enabled.EDIT="true"/>
+			<s:Button width="100"  skinClass="skins.skinLoginButton" label="重新受理" buttonDown="dispatchEvent(new Event(BACK));"
+					  enabled="false" enabled.EDIT="true"/>		
+			<s:Spacer width="100%"/>
+			<s:Button width="100" id="btnPrevious" skinClass="skins.skinLoginButton" label="返回打印" buttonDown="dispatchEvent(new Event(PREVIOUS));"/>
+			<s:Button width="100"  skinClass="skins.skinLoginButton" label="关闭" buttonDown="dispatchEvent(new Event(CLOSE));"/>
+		</s:SkinnableContainer>				
+	</s:VGroup>	
+</subComponents:BasePopupPanel>

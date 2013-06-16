@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<subComponents:BasePopupPanel xmlns:fx="http://ns.adobe.com/mxml/2009"
+							  xmlns:s="library://ns.adobe.com/flex/spark"
+							  xmlns:mx="library://ns.adobe.com/flex/mx"
+							  xmlns:subComponents="app.view.components.subComponents.*"
+							  verticalCenter="0" horizontalCenter="0"
+							  width="650" height="100%" enableIcon="false" enableMinimizeButton="false"
+							  panelTitle="装订终稿" skinClass="skins.skinBasePopupPanel">
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[		
+			import app.AppEvent;
+			import app.model.vo.ReportVO;
+			
+			import mx.collections.ArrayCollection;
+			
+			public static const PREVIOUS:String = "previous";
+			public static const ACCEPT:String = "accept";
+			public static const SUBMIT:String = "submit";
+			public static const CLOSE:String = "close";
+			public static const BACK:String = "back";
+									
+			[Bindable]public var report:ReportVO;
+		]]>
+	</fx:Script>
+		
+	<subComponents:states>
+		<s:State name="VIEW"/>
+		<s:State name="ACCEPT"/>
+		<s:State name="EDIT"/>
+	</subComponents:states>
+	
+	<s:VGroup width="100%">
+		<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0.3">
+			<s:layout>
+				<s:HorizontalLayout verticalAlign="middle"/>
+			</s:layout>
+			<s:Label text="　装订人：" fontWeight="bold"/>
+			<s:TextInput id="textPrintName" enabled="false" width="100%" text="{report.bindingerName}"/>
+			<s:Label text="装订时间：" fontWeight="bold"/>
+			<s:TextInput id="textPrintDate" enabled="false" width="100%" text="{report.BindingDate}"/>
+		</s:SkinnableContainer>	
+		
+		<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0">
+			<s:layout>
+				<s:HorizontalLayout horizontalAlign="center"/>
+			</s:layout>			
+			<s:Button width="100"  skinClass="skins.skinLoginButton" label="接受装订" buttonDown="dispatchEvent(new Event(ACCEPT));"
+					  enabled="false" enabled.ACCEPT="true"/>
+			<s:Button width="100"  skinClass="skins.skinLoginButton" label="装订完毕" buttonDown="dispatchEvent(new Event(SUBMIT));"
+					  enabled="false" enabled.EDIT="true"/>
+			<s:Button width="100"  skinClass="skins.skinLoginButton" label="重新受理" buttonDown="dispatchEvent(new Event(BACK));"
+					  enabled="false" enabled.EDIT="true"/>	
+			<s:Spacer width="100%"/>
+			<s:Button width="100" skinClass="skins.skinLoginButton" label="返回修订" buttonDown="dispatchEvent(new Event(PREVIOUS));"
+					  enabled="false" enabled.EDIT="true" enabled.ACCEPT="true"/>
+			<s:Button width="100"  skinClass="skins.skinLoginButton" label="关闭" buttonDown="dispatchEvent(new Event(CLOSE));"/>
+		</s:SkinnableContainer>				
+	</s:VGroup>	
+</subComponents:BasePopupPanel>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="400" height="30">
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->			
+		<s:Move id="moveMessage" xFrom="400" xTo="100" duration="5000" target="{labelMessage}"/>			
+	</fx:Declarations>
+		
+	<s:Label paddingLeft="20" text="留言板：" verticalCenter="0"/>
+	
+	<s:Label id="labelMessage" verticalCenter="0"/>
+</s:Group>

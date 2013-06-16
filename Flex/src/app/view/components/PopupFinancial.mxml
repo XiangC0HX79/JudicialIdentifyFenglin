@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="utf-8"?>
+<subComponents:BasePopupPanel xmlns:fx="http://ns.adobe.com/mxml/2009"
+							  xmlns:s="library://ns.adobe.com/flex/spark"
+							  xmlns:mx="library://ns.adobe.com/flex/mx"
+							  xmlns:subComponents="app.view.components.subComponents.*"
+							  verticalCenter="0" horizontalCenter="0"
+							  width="650" height="100%" enableIcon="false" enableMinimizeButton="false"
+							  panelTitle="缴费情况" skinClass="skins.skinBasePopupPanel">
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+		<s:RadioButtonGroup id="radioCommision" selectedValue="{report.commision}"/>
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[			
+			import app.model.vo.ReportVO;
+			
+			import spark.events.IndexChangeEvent;
+			
+			public static const SUBMIT:String = "submit";
+			public static const CLOSE:String = "close";
+			
+			[Bindable]public var report:ReportVO;
+			
+			protected function closeFirstImage_clickHandler(event:MouseEvent):void
+			{
+				dateFirst.selectedDate = null;
+			}
+			
+			protected function closeBillImage_clickHandler(event:MouseEvent):void
+			{
+				dateBilling.selectedDate = null;
+			}
+			
+			protected function closeLastImage_clickHandler(event:MouseEvent):void
+			{
+				dateLast.selectedDate = null;
+			}
+			
+			protected function comboPayType_changeHandler(event:IndexChangeEvent):void
+			{
+				if(comboPayType.selectedIndex == 0)
+				{
+					this.numPaidAmount.value = 0;
+					this.numRefund.value = 0;
+					this.radioCommision.selectedValue = false;
+					this.dateFirst.selectedDate = null;
+					this.dateLast.selectedDate = null;
+				}
+			}
+			
+			protected function comboBillStatus_changeHandler(event:IndexChangeEvent):void
+			{
+				if(comboBillStatus.selectedIndex == 0)
+				{
+					this.dateBilling.selectedDate = null;
+					this.numBillAmount.value = 0;
+					this.textBillNo.text = "";
+				}
+			}
+			
+		]]>
+	</fx:Script>
+			
+	<s:VGroup width="100%">		
+		<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0.3">
+			<s:layout>
+				<s:HorizontalLayout verticalAlign="middle"/>
+			</s:layout>
+			<s:HGroup width="50%" verticalAlign="middle">				
+				<s:Label text="编　　号：" fontWeight="bold"/>
+				<s:TextInput width="100%" editable="false" text="{report.FullNO}"/>	
+			</s:HGroup>
+			<s:HGroup width="50%" verticalAlign="middle">		
+				<s:Label text="受理日期：" fontWeight="bold"/>
+				<s:TextInput width="100%" editable="false" text="{report.AcceptDate}"/>
+			</s:HGroup>
+		</s:SkinnableContainer>			
+		
+		<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0">
+			<s:layout>
+				<s:HorizontalLayout verticalAlign="middle"/>
+			</s:layout>
+			<s:Label text="委托单位：" fontWeight="bold"/>
+			<s:TextInput width="100%" editable="false" text="{report.unitEntrust}"/>
+		</s:SkinnableContainer>			
+		
+		<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0.3">
+			<s:layout>
+				<s:HorizontalLayout verticalAlign="middle"/>
+			</s:layout>			
+			<s:HGroup width="50%" verticalAlign="middle">	
+				<s:Label text="委托联系人：" fontWeight="bold"/>
+				<s:TextInput width="100%" editable="false" text="{report.unitPeople}"/>
+			</s:HGroup>
+			<s:HGroup width="50%" verticalAlign="middle">	
+				<s:Label text="联系方式：" fontWeight="bold"/>
+				<s:TextInput width="100%" editable="false" text="{report.unitContact}"/>
+			</s:HGroup>
+		</s:SkinnableContainer>		
+		
+		<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0">
+			<s:layout>
+				<s:HorizontalLayout verticalAlign="middle"/>
+			</s:layout>
+			<s:HGroup width="50%" verticalAlign="middle">	
+				<s:Label text="　受检人：" fontWeight="bold"/>
+				<s:TextInput width="100%" editable="false" text="{report.checkedPeople}"/>
+			</s:HGroup>	
+			<s:HGroup width="50%" verticalAlign="middle">	
+				<s:Label text="受理地点：" fontWeight="bold"/>
+				<s:TextInput width="100%" editable="false" text="{report.AccepterAddress.label}"/>
+			</s:HGroup>
+		</s:SkinnableContainer>	
+		
+		<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0.3">
+			<s:layout>
+				<s:HorizontalLayout verticalAlign="middle"/>
+			</s:layout>	
+			<s:HGroup width="100%" verticalAlign="middle">
+				<s:Label text="缴费方式：" fontWeight="bold"/>
+				<s:DropDownList id="comboPayType" width="100%" requireSelection="true" 
+								change="comboPayType_changeHandler(event)">
+					<s:dataProvider>
+						<s:ArrayCollection>
+							<fx:String>未缴费</fx:String>
+							<fx:String>现金</fx:String>
+							<fx:String>POS机</fx:String>
+							<fx:String>转账</fx:String>
+						</s:ArrayCollection>
+					</s:dataProvider>
+				</s:DropDownList>				
+			</s:HGroup>
+			<s:HGroup width="100%" verticalAlign="middle">
+				<s:Label text="应缴金额：" fontWeight="bold"/>
+				<s:NumericStepper id="numPayAmount" width="100%"
+								  maximum="100000.00" stepSize="0.01" minimum="0.00"
+								  value="{report.payAmount}"/>		
+			</s:HGroup>
+			<s:HGroup width="100%" verticalAlign="middle">
+				<s:Label text="返佣金额：" fontWeight="bold"/>
+				<s:NumericStepper id="numCommisionAmount"  width="100%"
+								  minimum="0.00" maximum="100000.00" 
+								  stepSize="0.01"
+								  value="{report.commisionAmount}"/>		
+			</s:HGroup>
+		</s:SkinnableContainer>	
+		
+		<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0" enabled="{comboPayType.selectedIndex != 0}">
+			<s:layout>
+				<s:HorizontalLayout verticalAlign="middle"/>
+			</s:layout>	
+			<s:HGroup width="100%" verticalAlign="middle">
+				<s:Label text="已收金额：" fontWeight="bold"/>
+				<s:NumericStepper id="numPaidAmount"  width="100%"
+								  maximum="100000.00" stepSize="0.01" minimum="0.00"
+								  value="{report.paidAmount}"/>		
+			</s:HGroup>
+			<s:HGroup width="100%" verticalAlign="middle">
+				<s:Label text="返　　佣：" fontWeight="bold"/>
+				<s:RadioButton width="100%" label="是" group="{radioCommision}" value="true"/>
+				<s:RadioButton width="100%" label="否" group="{radioCommision}" value="false"/>
+			</s:HGroup>
+			<s:HGroup width="100%" verticalAlign="middle">
+				<s:Label text="退费金额：" fontWeight="bold"/>
+				<s:NumericStepper id="numRefund"  width="100%"
+								  minimum="0.00" maximum="100000.00" 
+								  stepSize="0.01"
+								  value="{report.refund}"/>		
+			</s:HGroup>
+		</s:SkinnableContainer>	
+			
+		<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0.3" enabled="{comboPayType.selectedIndex != 0}">
+			<s:layout>
+				<s:HorizontalLayout verticalAlign="middle"/>
+			</s:layout>	
+			<s:HGroup width="100%" verticalAlign="middle">
+				<s:Label text="预收款日期：" fontWeight="bold"/>
+				<s:HGroup gap="0" width="100%" verticalAlign="middle">
+					<mx:DateField id="dateFirst" width="100%" 
+								  selectedDate="{report.payFirstDate}"
+								  dayNames="['日', '一', '二', '三', '四', '五', '六']"
+								  formatString="YYYY-MM-DD"
+								  monthNames="['一月', '二月', '三月', '四月', '五月',
+								  '六月', '七月', '八月', '九月', '十月', '十一月','十二月']"/>	
+					<s:Image id="closeFirstImage" source="@Embed('assets/image/dialog_close.png')" buttonMode="true"
+							 click="closeFirstImage_clickHandler(event)" toolTip="清空日期"/>
+				</s:HGroup>	
+			</s:HGroup>
+			<s:HGroup width="100%" verticalAlign="middle">
+				<s:Label text="尾款日期：" fontWeight="bold"/>
+				<s:HGroup gap="0" width="100%" verticalAlign="middle">
+					<mx:DateField id="dateLast" width="100%" 
+								  selectedDate="{report.payLastDate}"
+								  dayNames="['日', '一', '二', '三', '四', '五', '六']"
+								  formatString="YYYY-MM-DD"
+								  monthNames="['一月', '二月', '三月', '四月', '五月',
+								  '六月', '七月', '八月', '九月', '十月', '十一月','十二月']"/>		
+					<s:Image id="closeLastImage" source="@Embed('assets/image/dialog_close.png')" buttonMode="true"
+							 click="closeLastImage_clickHandler(event)" toolTip="清空日期"/>		
+				</s:HGroup>	
+			</s:HGroup>
+		</s:SkinnableContainer>	
+				
+		<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0">
+			<s:layout>
+				<s:HorizontalLayout verticalAlign="middle"/>
+			</s:layout>	
+			<s:HGroup width="100%" verticalAlign="middle">
+				<s:Label text="开票情况：" fontWeight="bold"/>
+				<s:DropDownList width="100%" requireSelection="true" id="comboBillStatus" change="comboBillStatus_changeHandler(event)">
+					<s:dataProvider>
+						<s:ArrayCollection>
+							<fx:String>未开票</fx:String>
+							<fx:String>发票</fx:String>
+							<fx:String>收据</fx:String>
+						</s:ArrayCollection>
+					</s:dataProvider>
+				</s:DropDownList>			
+			</s:HGroup>
+			<s:HGroup width="100%" verticalAlign="middle" enabled="{comboBillStatus.selectedIndex != 0}">
+				<s:Label text="开票日期：" fontWeight="bold"/>
+				<s:HGroup gap="0" width="100%" verticalAlign="middle">
+					<mx:DateField selectedDate="{report.billDate}" id="dateBilling" width="100%" 
+								  dayNames="['日', '一', '二', '三', '四', '五', '六']"
+								  formatString="YYYY-MM-DD"
+								  monthNames="['一月', '二月', '三月', '四月', '五月',
+								  '六月', '七月', '八月', '九月', '十月', '十一月','十二月']"/>		
+					<s:Image id="closeBillImage" source="@Embed('assets/image/dialog_close.png')" buttonMode="true"
+							 click="closeBillImage_clickHandler(event)"  toolTip="清空日期"/>		
+				</s:HGroup>	
+			</s:HGroup>
+		</s:SkinnableContainer>	
+		
+		<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0.3" enabled="{comboBillStatus.selectedIndex != 0}">
+			<s:layout>
+				<s:HorizontalLayout verticalAlign="middle"/>
+			</s:layout>	
+			<s:HGroup width="100%" verticalAlign="middle">
+				<s:Label text="票　　号：" fontWeight="bold"/>
+				<s:TextInput width="100%" id="textBillNo" text="{report.billNo}"/>			
+			</s:HGroup>
+			<s:HGroup width="100%" verticalAlign="middle">
+				<s:Label text="开票金额：" fontWeight="bold"/>
+				<s:NumericStepper id="numBillAmount"  width="100%"
+								  maximum="100000.00" stepSize="0.01" minimum="0.00"
+								  value="{report.billAmount}"/>				
+			</s:HGroup>
+		</s:SkinnableContainer>	
+		
+		<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0">
+			<s:layout>
+				<s:HorizontalLayout horizontalAlign="center"/>
+			</s:layout>			
+			<s:Button width="100"  skinClass="skins.skinLoginButton" label="提交" buttonDown="dispatchEvent(new Event(SUBMIT));"/>	
+			<s:Spacer width="100%"/>
+			<s:Button width="100"  skinClass="skins.skinLoginButton" label="关闭" buttonDown="dispatchEvent(new Event(CLOSE));"/>
+		</s:SkinnableContainer>		
+	</s:VGroup>		
+</subComponents:BasePopupPanel>

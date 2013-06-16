@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:ItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009"
+				xmlns:s="library://ns.adobe.com/flex/spark"
+				xmlns:mx="library://ns.adobe.com/flex/mx"
+				width="100%">
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import app.AppEvent;
+			import app.model.vo.FeedbackAttachVO;
+			
+			import mx.events.FlexEvent;
+			
+			import spark.components.DataGroup;
+			
+			override public function set data(item:Object):void
+			{
+				super.data = item;
+				
+				if(data == null)
+				{			
+					btn.label = "添加";
+				}
+				else
+				{					
+					btn.label = "删除";
+				}				
+			}		
+			
+			protected function btn_buttonDownHandler(event:FlexEvent):void
+			{
+				if(data == null)
+				{
+					dispatchEvent(new AppEvent(AppEvent.UPLOADATTACH,data,true));
+				}
+				else
+				{
+					var dataGroup:DataGroup = this.owner as DataGroup;
+					dataGroup.dataProvider.removeItemAt(this.itemIndex);
+				}
+			}			
+		]]>
+	</fx:Script>
+	
+	<s:layout>
+		<s:HorizontalLayout verticalAlign="middle"/>
+	</s:layout>
+	<s:TextInput editable="false" id="textName" text="{data.fileName}" width="100%"/>
+	<s:Button skinClass="skins.skinLoginButton" id="btn" 
+			  buttonDown="btn_buttonDownHandler(event)"/>
+</s:ItemRenderer>

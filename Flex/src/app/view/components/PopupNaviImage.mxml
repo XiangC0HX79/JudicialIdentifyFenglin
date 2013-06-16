@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<subComponents:BasePopupPanel xmlns:fx="http://ns.adobe.com/mxml/2009"
+							  xmlns:s="library://ns.adobe.com/flex/spark"
+							  xmlns:mx="library://ns.adobe.com/flex/mx"
+							  xmlns:subComponents="app.view.components.subComponents.*"
+							  verticalCenter="0" horizontalCenter="0"
+							  width="800" height="600"
+							  enableIcon="false" enableMinimizeButton="false"
+							  panelTitle="查看照片" skinClass="skins.skinBasePopupPanel" 
+							  xmlns:components="app.view.components.*">
+	<fx:Script>
+		<![CDATA[			
+			import mx.collections.ArrayCollection;
+			
+			public static const DOWNLOAD:String = "download";
+			
+			public static const PREIMAGE:String = "preimage";
+			public static const NEXTIMAGE:String = "nextimage";
+			
+			public var listSource:ArrayCollection;
+			public var listIndex:Number;
+			
+			[Bindable]public var source:BitmapData;
+			
+			[Bindable]public var srcPoint:Point;
+			
+			[Bindable]public var scales:Array = new Array(11);
+			
+			[Bindable]public var contentScaleIndex:Number = 0;
+			
+			[Bindable]public var trueScaleIndex:Number = 0;
+			
+			[Bindable]private var currentScaleIndex:Number = 0;
+			
+			public function setScale(scaleIndex:Number,zoomPoint:Point = null):void
+			{
+				if(zoomPoint == null)
+					zoomPoint = new Point(this.image.width / 2,this.image.height / 2);
+				
+				var zoomScaleX:Number = zoomPoint.x / this.image.width;
+				var zoomScaleY:Number = zoomPoint.y / this.image.height;
+								
+				this.currentScaleIndex = scaleIndex;				
+				this.image.width = int(source.width * scales[scaleIndex]);
+				this.image.height = int(source.height * scales[scaleIndex]);
+				
+				if(this.group.width >= this.image.width)
+				{
+					this.image.x = int((this.group.width - this.image.width) / 2);
+				}
+				else if(this.image.x + int(zoomPoint.x - this.image.width * zoomScaleX) > 0)
+				{
+					this.image.x = 0;
+				}
+				else
+				{
+					this.image.x += int(zoomPoint.x - this.image.width * zoomScaleX) ;
+				}
+				
+				if(this.group.height >= this.image.height)
+				{
+					this.image.y = int((this.group.height - this.image.height) / 2);
+				}
+				else if(this.image.y + int(zoomPoint.y - this.image.height * zoomScaleY) > 0)
+				{
+					this.image.y= 0;
+				}
+				else
+				{					
+					this.image.y += int(zoomPoint.y - this.image.height * zoomScaleY);
+				}
+			}
+			
+			private function zoomin(zoomPoint:Point = null):void
+			{
+				var scaleIndex:Number = Math.min(currentScaleIndex + 1,scales.length - 1);
+				
+				this.setScale(scaleIndex,zoomPoint);
+			}
+			
+			private function zoomout(zoomPoint:Point = null):void
+			{
+				var scaleIndex:Number = Math.max(currentScaleIndex - 1,0);
+				
+				this.setScale(scaleIndex,zoomPoint);
+			}
+			
+			private function rotate():void
+			{    
+				var bmp:BitmapData = this.source;
+				
+				var m:Matrix = new Matrix();
+				m.rotate(-Math.PI/2);
+				m.translate(0,bmp.width);
+				var bd:BitmapData = new BitmapData(bmp.height, bmp.width,false);
+				bd.draw(bmp,m);
+				
+				this.source = bd;
+			}
+			
+			protected function image_mouseWheelHandler(event:MouseEvent):void
+			{
+				if(event.delta > 0)
+				{					
+					zoomin(new Point(event.localX,event.localY));
+				}
+				else
+				{
+					zoomout(new Point(event.localX,event.localY));
+				}
+				
+			}
+			
+			protected function image_mouseDownHandler(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+				srcPoint = new Point(event.stageX,event.stageY);
+			}
+			
+			protected function image_mouseMoveHandler(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+				if(event.buttonDown)
+				{					
+					var desPoint:Point = new Point(event.stageX,event.stageY);
+					
+					var tempPoint:Point = new Point(image.x + desPoint.x - srcPoint.x,image.y + desPoint.y - srcPoint.y);
+					
+					if(this.group.width < this.image.width)
+					{
+						if(tempPoint.x > 0)
+						{
+							image.x = 0;
+						}
+						else if(tempPoint.x < this.group.width - image.width)
+						{
+							image.x = this.group.width - image.width;
+						}
+						else
+						{
+							image.x = tempPoint.x;
+						}		
+					}
+					
+					if(this.group.height < this.image.height)
+					{
+						if(tempPoint.y > 0)
+						{
+							image.y = 0;
+						}
+						else if(tempPoint.y < this.group.height - image.height)
+						{
+							image.y = this.group.height - image.height;
+						}
+						else
+						{
+							image.y = tempPoint.y;
+						}	
+					}
+					
+					srcPoint.x = desPoint.x;
+					srcPoint.y = desPoint.y;
+				}
+			}
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+		
+	<s:Group id="group" top="0" left="0" right="0" bottom="25" clipAndEnableScrolling="true">			
+		<s:Image id="image" source="{source}"
+				 mouseWheel="image_mouseWheelHandler(event)" 
+				 mouseMove="image_mouseMoveHandler(event)"
+				 mouseDown="image_mouseDownHandler(event)"/>
+	</s:Group>
+	<s:HGroup width="100%" height="25" bottom="0" verticalAlign="middle">
+		<s:Button label="下载图片" width="100"  skinClass="skins.skinLoginButton" buttonDown="dispatchEvent(new Event(DOWNLOAD));"/>
+		<s:Button label="窗口大小" width="100"  skinClass="skins.skinLoginButton" buttonDown="setScale(contentScaleIndex);"/>
+		<s:Button label="实际大小" width="100"  skinClass="skins.skinLoginButton" buttonDown="setScale(trueScaleIndex);"/>
+		<s:Spacer width="100%"/>
+		<s:Image buttonMode="true" id="btnPreImage" width="20" height="20" source="@Embed('assets/image/map_pre.png')" click="dispatchEvent(new Event(PREIMAGE));" toolTip="上一张"/>
+		<s:Image buttonMode="true" id="btnNextImage" width="20" height="20" source="@Embed('assets/image/map_next.png')" click="dispatchEvent(new Event(NEXTIMAGE));" toolTip="下一张"/>
+		<s:Image buttonMode="true" width="20" height="20" source="@Embed('assets/image/map_rotate.png')" click="rotate();" toolTip="旋转图片"/>
+		<s:Image buttonMode="true" width="20" height="20" source="@Embed('assets/image/map_zoomout.png')" click="zoomout();"/>
+		<s:HSlider showDataTip="false" id="slider" width="100" maximum="10" minimum="0" value="{currentScaleIndex}" change="setScale(slider.value);"/>
+		<s:Image buttonMode="true" width="20" height="20" source="@Embed('assets/image/map_zoomin.png')" click="zoomin();"/>
+		<s:Spacer width="100%"/>
+		<s:Spacer width="100"/>
+		<s:Button label="关闭" width="100"  skinClass="skins.skinLoginButton" buttonDown="dispatchEvent(new Event(BasePopupPanel.SUBPANEL_CLOSED,true));"/>
+	</s:HGroup>
+</subComponents:BasePopupPanel>

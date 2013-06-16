@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:NavigatorContent xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					xmlns:s="library://ns.adobe.com/flex/spark"
+					xmlns:mx="library://ns.adobe.com/flex/mx"  
+					label="报告导出">
+	<fx:Script>
+		<![CDATA[
+			import app.view.components.subComponents.BasePopupPanel;
+			
+			public static const BACKUP:String = "backup";
+			
+			public static const CLOSE:String = "close";
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<s:layout>
+		<s:VerticalLayout paddingTop="5" paddingLeft="5" paddingBottom="5" paddingRight="5"/>
+	</s:layout>
+		
+	<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0.3">
+		<s:layout>
+			<s:HorizontalLayout paddingTop="2" verticalAlign="middle"/>
+		</s:layout>				
+		<s:Label text="年度：" fontWeight="bold"/>
+		<s:ComboBox id="comboYear" width="150"/>
+		<s:Label text="月份：" fontWeight="bold"/>
+		<s:ComboBox id="comboMonth" width="150" requireSelection="true">
+			<s:ArrayCollection>
+				<fx:String>一月</fx:String>
+				<fx:String>二月</fx:String>
+				<fx:String>三月</fx:String>
+				<fx:String>四月</fx:String>
+				<fx:String>五月</fx:String>
+				<fx:String>六月</fx:String>
+				<fx:String>七月</fx:String>
+				<fx:String>八月</fx:String>
+				<fx:String>九月</fx:String>
+				<fx:String>十月</fx:String>
+				<fx:String>十一月</fx:String>
+				<fx:String>十二月</fx:String>
+			</s:ArrayCollection>
+		</s:ComboBox>		
+				
+	</s:SkinnableContainer>		
+	
+	<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0.3">
+		<s:layout>
+			<s:HorizontalLayout paddingTop="2" verticalAlign="middle"/>
+		</s:layout>			
+		<s:Label text="类型：" fontWeight="bold"/>
+		<s:ComboBox id="comboType" width="150"/>	
+	<!--	<s:Label text="编号：" fontWeight="bold"/>
+		<s:TextInput id="textNo" restrict="0-9" width="150"/>	-->
+	</s:SkinnableContainer>		
+	
+	<s:HGroup horizontalAlign="center" width="100%">
+		<s:Button label="报告导出" width="100" skinClass="skins.skinLoginButton" 
+				  buttonDown="dispatchEvent(new Event(BACKUP))"/>
+		<s:Button label="返回" width="100"  skinClass="skins.skinLoginButton" 
+				  buttonDown="dispatchEvent(new Event(CLOSE))"/>
+	</s:HGroup>
+</s:NavigatorContent>

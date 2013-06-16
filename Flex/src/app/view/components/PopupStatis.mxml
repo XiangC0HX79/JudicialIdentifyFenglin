@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<subComponents:BasePopupPanel xmlns:fx="http://ns.adobe.com/mxml/2009"
+							  xmlns:s="library://ns.adobe.com/flex/spark"
+							  xmlns:mx="library://ns.adobe.com/flex/mx"
+							  xmlns:subComponents="app.view.components.subComponents.*" 
+							  verticalCenter="0" horizontalCenter="0"
+							  width="900"
+							  enableIcon="false" enableMinimizeButton="false"
+							  panelTitle="综合统计" skinClass="skins.skinBasePopupPanel" xmlns:components="app.view.components.*">
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	
+	<s:VGroup width="100%" gap="0">		
+		<s:TabBar dataProvider="{view1}"/>
+		<mx:ViewStack width="100%" id="view1" borderStyle="solid" resizeToContent="true" creationPolicy="all"/>
+	</s:VGroup>
+</subComponents:BasePopupPanel>

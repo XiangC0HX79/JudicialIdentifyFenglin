@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:NavigatorContent xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					xmlns:s="library://ns.adobe.com/flex/spark" 
+					xmlns:mx="library://ns.adobe.com/flex/mx" 
+					label="角色管理">
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import app.view.components.subComponents.BasePopupPanel;
+			
+			import mx.collections.ArrayCollection;
+						
+			public static const CLOSE:String = "close";
+			public static const LISTROLECHANGE:String = "listrolechange";			
+			public static const NEWROLE:String = "newrole";
+			public static const UPDATEROLE:String = "updaterole";
+			public static const DELETEROLE:String = "deleterole";
+			
+			[Bindable]public var listRole:ArrayCollection;		
+			[Bindable]public var listRight:ArrayCollection;
+		]]>
+	</fx:Script>
+	
+	<s:layout>
+		<s:VerticalLayout paddingTop="5" paddingLeft="5" paddingBottom="5" paddingRight="5"/>
+	</s:layout>
+	
+	<s:HGroup>		
+		<s:VGroup>
+			<s:Label text="角色列表：" fontWeight="bold"/>
+			<s:List id="gridRole" height="200" width="100" dataProvider="{listRole}" labelField="label" 
+					change="dispatchEvent(new Event(LISTROLECHANGE))"/>
+		</s:VGroup>
+		
+		<s:VGroup>			
+			<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0.3">
+				<s:layout>
+					<s:HorizontalLayout verticalAlign="middle"/>
+				</s:layout>			
+				<s:Label text="　角色名：" fontWeight="bold"/>
+				<s:TextInput id="textRole" width="100%" text="{gridRole.selectedItem.label}"/>
+			</s:SkinnableContainer>		
+			
+			<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0">
+				<s:layout>
+					<s:HorizontalLayout/>
+				</s:layout>			
+				<s:Label text="权限分配：" fontWeight="bold"/>
+				<s:DataGroup width="225" dataProvider="{listRight}" 
+							 itemRenderer="app.view.components.subComponents.ItemRendererGroup">
+					<s:layout>
+						<s:TileLayout columnAlign="justifyUsingWidth" 
+									  paddingTop="2" paddingBottom="2"/>
+					</s:layout>			
+				</s:DataGroup>
+			</s:SkinnableContainer>		
+		</s:VGroup>
+	</s:HGroup>
+	
+	<s:HGroup horizontalAlign="center" width="100%">
+		<s:Button label="增加" width="100"  skinClass="skins.skinLoginButton"
+				  buttonDown="dispatchEvent(new Event(NEWROLE))"/>
+		<s:Button label="修改" width="100"  skinClass="skins.skinLoginButton"
+				  buttonDown="dispatchEvent(new Event(UPDATEROLE))"/>
+		<s:Button label="删除" width="100"  skinClass="skins.skinLoginButton"
+				  buttonDown="dispatchEvent(new Event(DELETEROLE))"/>
+		<s:Button label="返回" width="100"  skinClass="skins.skinLoginButton"
+				  buttonDown="dispatchEvent(new Event(CLOSE))"/>
+	</s:HGroup>
+</s:NavigatorContent>

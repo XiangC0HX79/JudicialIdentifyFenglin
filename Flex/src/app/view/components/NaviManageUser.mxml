@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:NavigatorContent xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					xmlns:s="library://ns.adobe.com/flex/spark" 
+					xmlns:mx="library://ns.adobe.com/flex/mx"
+					label="用户管理">
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[			
+			import app.AppEvent;
+			import app.view.components.subComponents.BasePopupPanel;
+			
+			import mx.events.FlexEvent;
+			
+			public static const CLOSE:String = "close";
+			public static const LISTUSERCHANGE:String = "listuserchange";
+			public static const NEWUSER:String = "newuser";
+			public static const UPDATEUSER:String = "updateuser";
+			public static const DELETEUSER:String = "deleteuser";
+			
+			[Bindable]public var listUser:ArrayCollection;
+			[Bindable]public var listGroup:ArrayCollection;
+			[Bindable]public var listRole:ArrayCollection;			
+		]]>
+	</fx:Script>
+	
+	<s:layout>
+		<s:VerticalLayout paddingTop="5" paddingLeft="5" paddingBottom="5" paddingRight="5"/>
+	</s:layout>
+	
+	<s:HGroup height="100%">		
+		<s:VGroup height="100%">
+			<s:Label text="用户列表：" fontWeight="bold"/>
+			<s:List id="gridUser" height="300" width="100" dataProvider="{listUser}" labelField="name" 
+					change="dispatchEvent(new Event(LISTUSERCHANGE))"/>
+		</s:VGroup>
+		
+		<s:VGroup height="100%">			
+			<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0.3">
+				<s:layout>
+					<s:HorizontalLayout verticalAlign="middle"/>
+				</s:layout>			
+				<s:Label text="姓　　名：" fontWeight="bold"/>
+				<s:TextInput id="textName" width="100%" text="{gridUser.selectedItem.name}"/>
+				<s:Label text="性　　别：" fontWeight="bold"/>
+				<s:DropDownList id="comboSex" requireSelection="true" width="100%" selectedItem="{gridUser.selectedItem.sex}">
+					<s:dataProvider>
+						<s:ArrayCollection>
+							<fx:String>男</fx:String>
+							<fx:String>女</fx:String>										
+						</s:ArrayCollection>
+					</s:dataProvider>
+				</s:DropDownList>
+			</s:SkinnableContainer>		
+			
+			<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0">
+				<s:layout>
+					<s:HorizontalLayout verticalAlign="middle"/>
+				</s:layout>			
+				<s:Label text="　用户名：" fontWeight="bold"/>
+				<s:TextInput id="textUserName" width="100%" text="{gridUser.selectedItem.username}"/>
+				<s:Label text="密　　码：" fontWeight="bold"/>
+				<s:TextInput id="textPassWord" width="100%" text="{gridUser.selectedItem.password}" displayAsPassword="true"/>
+			</s:SkinnableContainer>		
+			
+			<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0.3">
+				<s:layout>
+					<s:HorizontalLayout verticalAlign="middle"/>
+				</s:layout>			
+				<s:Label text="联系方式：" fontWeight="bold"/>
+				<s:TextInput id="textPhone" text="{gridUser.selectedItem.phone}" width="100%"/>
+			</s:SkinnableContainer>		
+			
+			<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0">
+				<s:layout>
+					<s:HorizontalLayout/>
+				</s:layout>			
+				<s:Label paddingTop="5" text="组　　别：" fontWeight="bold"/>
+				<s:DataGroup width="225" dataProvider="{listGroup}" 
+							 itemRenderer="app.view.components.subComponents.ItemRendererGroup">
+					<s:layout>
+						<s:TileLayout columnAlign="justifyUsingWidth" 
+									  paddingTop="2" paddingBottom="2"/>
+					</s:layout>			
+				</s:DataGroup>
+			</s:SkinnableContainer>		
+			
+			<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0.3">
+				<s:layout>
+					<s:HorizontalLayout/>
+				</s:layout>			
+				<s:Label paddingTop="5" text="任　　务：" fontWeight="bold"/>
+				<s:VGroup paddingLeft="20">
+					<s:HGroup>
+						<s:CheckBox width="110" id="checkAccpterA" label="受理人A" selected="{gridUser.selectedItem.accepterA}"/>
+						<s:CheckBox width="110" id="checkAccpterB" label="受理人B" selected="{gridUser.selectedItem.accepterB}"/>
+						<s:CheckBox width="110" id="checkAccpterC" label="受理人C" selected="{gridUser.selectedItem.accepterC}"/>
+					</s:HGroup>
+					<s:HGroup>
+						<s:CheckBox width="110" id="checkSigner" label="鉴定人 " selected="{gridUser.selectedItem.signer}"/>
+						<s:CheckBox width="110" id="checkDiagnosiser" label="会诊人 " selected="{gridUser.selectedItem.consulter}"/>
+					</s:HGroup>
+				</s:VGroup>
+			</s:SkinnableContainer>		
+			
+			
+			<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0">
+				<s:layout>
+					<s:HorizontalLayout/>
+				</s:layout>			
+				<s:Label paddingTop="5" text="角色分配：" fontWeight="bold"/>
+				<s:DataGroup width="225" dataProvider="{listRole}" 
+							 itemRenderer="app.view.components.subComponents.ItemRendererGroup">
+					<s:layout>
+						<s:TileLayout columnAlign="justifyUsingWidth" 
+									  paddingTop="2" paddingBottom="2"/>
+					</s:layout>			
+				</s:DataGroup>
+			</s:SkinnableContainer>		
+		</s:VGroup>
+	</s:HGroup>
+	<s:HGroup horizontalAlign="center" width="100%">
+		<s:Button label="增加" width="100"  skinClass="skins.skinLoginButton"
+				  buttonDown="dispatchEvent(new Event(NEWUSER))"/>
+		<s:Button label="修改" width="100"  skinClass="skins.skinLoginButton"
+				  buttonDown="dispatchEvent(new Event(UPDATEUSER))"/>
+		<s:Button label="删除" width="100"  skinClass="skins.skinLoginButton"
+				  buttonDown="dispatchEvent(new Event(DELETEUSER))"/>
+		<s:Button label="返回" width="100"  skinClass="skins.skinLoginButton"
+				  buttonDown="dispatchEvent(new Event(CLOSE))"/>
+	</s:HGroup>
+</s:NavigatorContent>

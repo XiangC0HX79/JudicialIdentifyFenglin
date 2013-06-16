@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:NavigatorContent xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 label="打印数量">
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import app.model.dict.GroupDict;
+			
+			public static const SUBMIT:String = "submit";	
+		]]>
+	</fx:Script>
+	
+	<s:layout>
+		<s:VerticalLayout paddingTop="5" paddingLeft="5" paddingBottom="5" paddingRight="5"/>
+	</s:layout>			
+	
+	<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0">
+		<s:layout>
+			<s:HorizontalLayout verticalAlign="middle"/>
+		</s:layout>			
+		<s:Label text="统计时段：" fontWeight="bold"/>
+		<s:DropDownList id="comboTime">
+			<s:ArrayCollection>
+				<fx:String>按年度</fx:String>
+				<fx:String>按月份</fx:String>
+			</s:ArrayCollection>
+		</s:DropDownList>
+		
+		<s:Spacer width="20"/>
+		
+		<mx:ViewStack selectedIndex="{comboTime.selectedIndex}" width="100%">
+			<s:NavigatorContent>
+				<s:HGroup verticalAlign="middle">
+					<s:Label text="年度列表：" fontWeight="bold"/>
+					<s:DropDownList id="comboYear"/>
+				</s:HGroup>
+			</s:NavigatorContent>
+			<s:NavigatorContent>
+				<s:HGroup verticalAlign="middle">
+					<s:Label text="年度列表：" fontWeight="bold"/>
+					<s:DropDownList id="comboMonthYear"/>
+					<s:Label text="月份列表：" fontWeight="bold"/>
+					<s:DropDownList id="comboMonth">
+						<s:ArrayCollection>
+							<fx:String>一月</fx:String>
+							<fx:String>二月</fx:String>
+							<fx:String>三月</fx:String>
+							<fx:String>四月</fx:String>
+							<fx:String>五月</fx:String>
+							<fx:String>六月</fx:String>
+							<fx:String>七月</fx:String>
+							<fx:String>八月</fx:String>
+							<fx:String>九月</fx:String>
+							<fx:String>十月</fx:String>
+							<fx:String>十一月</fx:String>
+							<fx:String>十二月</fx:String>
+						</s:ArrayCollection>
+					</s:DropDownList>
+				</s:HGroup>
+			</s:NavigatorContent>
+		</mx:ViewStack>
+		
+		<s:Button width="100" label="统计" skinClass="skins.skinLoginButton" buttonDown="dispatchEvent(new Event(SUBMIT))"/>
+	</s:SkinnableContainer>	
+	
+	<mx:ColumnChart id="columnChart" width="100%" height="100%" gutterLeft="0" fontSize="14" fontWeight="bold">
+		<mx:horizontalAxis>
+			<mx:CategoryAxis categoryField="姓名"/>
+		</mx:horizontalAxis>
+		<mx:series>
+			<mx:ColumnSeries displayName="数量" labelPosition="outside"
+							 xField="姓名" yField="数量"/>
+		</mx:series>
+	</mx:ColumnChart>			
+</s:NavigatorContent>

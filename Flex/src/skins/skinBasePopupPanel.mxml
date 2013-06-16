@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+
+    ADOBE SYSTEMS INCORPORATED
+    Copyright 2008 Adobe Systems Incorporated
+    All Rights Reserved.
+
+    NOTICE: Adobe permits you to use, modify, and distribute this file
+    in accordance with the terms of the license agreement accompanying it.
+
+-->
+
+<!--- The default skin class for a Spark SkinnableContainer container.  
+
+     @see spark.components.SkinnableContainer
+        
+      @langversion 3.0
+      @playerversion Flash 10
+      @playerversion AIR 1.5
+      @productversion Flex 4
+-->
+<s:Skin xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark" 
+    xmlns:fb="http://ns.adobe.com/flashbuilder/2009" alpha.disabled="0.5">
+	<fx:Metadata>[HostComponent("app.view.components.subComponents.BasePopupPanel")]</fx:Metadata>
+
+	<s:states>
+		<s:State name="normal"/>
+		<s:State name="open"/>
+		<s:State name="minimized"/>
+		<s:State name="closed"/>
+		<s:State name="disabled"/>
+	</s:states>
+	
+	<s:Group id="panelFrame"
+			 left="0" right="0" top="0" bottom="0"
+			 alpha.closed="0">
+		<s:Rect width="100%" height="100%"
+				radiusX="5"
+				radiusY="5">
+			<s:fill>
+				<s:SolidColor id="contentBackground"
+							  color="0x91D4EC"/>
+			</s:fill>
+			<s:stroke>
+				<s:SolidColorStroke id="border"
+									alpha.minimized="0.5"
+									color="0xFFFFFF"/>
+			</s:stroke>
+		</s:Rect>
+		<s:Rect right="1" height="30"
+				left="1" top="1"
+				topLeftRadiusX="5"
+				topRightRadiusX="5">
+			<s:fill>
+				<s:SolidColor id="headerBackground"
+							  color="0x016FBA"/>
+			</s:fill>
+		</s:Rect>
+		<s:filters>
+			<s:DropShadowFilter alpha="0.5"
+								blurX="10"
+								blurY="10"/>
+		</s:filters>
+	</s:Group>
+    
+	<s:Group id="header"
+			 height="30"
+			 left="5" left.minimized="55" right="{headerToolGroup.width + 20}" right.minimized="10" 
+			 top="0">
+		<s:Label id="widgetLabel" paddingLeft="10" paddingTop="5"
+				 fontWeight="bold"
+				 width="100%"
+				 alpha.closed="0"
+				 alpha.minimized="1"
+				 alpha.open="1"
+				 maxDisplayedLines="1"
+				 showTruncationTip="true" 
+				 color="0xFFFFFF"
+				 text="{hostComponent.panelTitle}"
+				 verticalCenter="0"/>
+	</s:Group>
+	
+	<s:Group id="headerToolGroup"
+			 height="20"
+			 right="70" top="0"
+			 alpha.closed="0"
+			 includeInLayout.minimized="false"
+			 visible.minimized="false"
+			 visible.open="true">
+		<s:layout>
+			<s:HorizontalLayout paddingLeft="10"/>
+		</s:layout>
+	</s:Group>
+	
+	<s:Group id="minclose"
+			 height="30"
+			 right="3" top="0"
+			 includeInLayout.minimized="false"
+			 visible.closed="false"
+			 visible.minimized="false">
+		<s:layout>
+			<s:HorizontalLayout gap="2"
+								paddingLeft="2"
+								verticalAlign="middle"/>
+		</s:layout>
+		<s:Image id="minimizeButton"
+				  buttonMode="true"
+				  includeInLayout="{hostComponent.enableMinimizeButton}"
+				  source="assets/image/w_min.png"
+				  toolTip="{resourceManager.getString('ViewerStrings', 'minimize')}"
+				  useHandCursor="true"
+				  visible="{hostComponent.enableMinimizeButton}"/>
+		<s:Image id="closeButton" visible="{hostComponent.enableCloseButton}" buttonMode="true"
+				 includeInLayout="{hostComponent.enableCloseButton}"
+				 source="assets/image/w_close.png"
+				 toolTip="{resourceManager.getString('ViewerStrings', 'close')}"
+				 useHandCursor="true"
+				 source.normal="@Embed('assets/image/w_close.png')"/>
+	</s:Group>
+	
+	<s:Image id="icon"
+			  x.minimized="10" x.open="-20" y="12" y.minimized="-2" width="40" height="40"
+			  buttonMode="false"
+			  buttonMode.minimized="true"
+			  source="{hostComponent.panelIcon}"
+			  useHandCursor="false"
+			  useHandCursor.minimized="true"
+			  visible="{hostComponent.enableIcon}"
+			  visible.closed="false">
+		<s:filters>
+			<s:DropShadowFilter blurX="10" blurY="10"/>
+		</s:filters>
+	</s:Image>
+	
+	<s:Scroller left="10" right="10" top="40" bottom="10">		
+		<s:Group id="contentGroup"				 
+				 alpha="1"
+				 alpha.normal="1"
+				 alpha.open="1"
+				 alpha.closed="0"
+				 alpha.minimized="0"
+				 clipAndEnableScrolling="true"
+				 visible.normal="true"
+				 visible.open="true">
+			<s:layout>
+				<s:BasicLayout/>
+			</s:layout>
+		</s:Group>
+	</s:Scroller>
+</s:Skin>
