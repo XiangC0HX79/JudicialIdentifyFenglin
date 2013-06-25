@@ -81,12 +81,9 @@
 		<s:DropDownList id="comboPeriodProcess" width="200">
 			<s:ArrayCollection>
 				<fx:String>所有环节</fx:String>
-				<fx:String>案件受理->打印初稿</fx:String>
-				<fx:String>打印初稿->案件初审</fx:String>
-				<fx:String>案件初审->法医复核</fx:String>
-				<fx:String>法医复核->修订稿件</fx:String>
-				<fx:String>修订稿件->装订初稿</fx:String>
-				<fx:String>装订初稿->法医签字</fx:String>
+				<fx:String>打印初稿</fx:String>
+				<fx:String>案件初审</fx:String>
+				<fx:String>法医复核</fx:String>
 			</s:ArrayCollection>
 		</s:DropDownList>
 	</s:SkinnableContainer>	

@@ -70,7 +70,7 @@
 			</s:HGroup>
 		</s:SkinnableContainer>					
 		
-		<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0" enabled="false" enabled.EDIT="true">
+		<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0" enabled="true" enabled.EDIT="true">
 			<s:layout>
 				<s:HorizontalLayout/>
 			</s:layout>

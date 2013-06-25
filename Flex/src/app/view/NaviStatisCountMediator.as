@@ -94,6 +94,8 @@ package app.view
 							listOffice.addItem(office);
 					}
 				}
+				listOffice.addItemAt("所有公安分局",0);
+				
 				naviStatisCount.comboUnitOffice.dataProvider = listOffice;
 								
 				naviStatisCount.viewUnit.selectedIndex = 1;

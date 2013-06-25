@@ -70,13 +70,14 @@
 			</s:HGroup>
 		</s:SkinnableContainer>					
 				
-		<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0.3" enabled="true" enabled.EDIT="true">
+		<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0.3" enabled="true">
 			<s:layout>
 				<s:HorizontalLayout/>
 			</s:layout>
 			<s:Label text="　初步照片：" fontWeight="bold" paddingTop="5"/>
 			<s:List dataProvider="{attach.listImage}" width="100%" height="118" horizontalScrollPolicy="on"
-					itemRenderer="app.view.components.subComponents.ItemRendererAttachStatic">
+					itemRenderer="app.view.components.subComponents.ItemRendererAttachStatic"
+					itemRenderer.EDIT="app.view.components.subComponents.ItemRendererAttach">
 				<s:layout>
 					<s:HorizontalLayout/>
 				</s:layout>		

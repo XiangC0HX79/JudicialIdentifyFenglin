@@ -49,6 +49,8 @@ package app.view
 			popupPrint.addEventListener(PopupPrint.UPLOADPHOTO,onUploadPhoto);
 			popupPrint.addEventListener(PopupPrint.DOWNLOADPHOTO,onDownloadPhoto);	
 			
+			popupPrint.addEventListener(AppEvent.UPLOADATTACH,onUploadAttach);
+			popupPrint.addEventListener(AppEvent.DELETEATTACH,onDeleteAttach);
 			popupPrint.addEventListener(AppEvent.NAVIATTACH,onNaviImage);
 			
 			loginProxy = facade.retrieveProxy(LoginProxy.NAME) as LoginProxy;
@@ -134,7 +136,9 @@ package app.view
 			}
 			
 			function onSetResult(result:Number):void
-			{			
+			{							
+				attachProxy.save(popupPrint.report);	
+				
 				popupPrint.report.printDate = ApplicationFacade.getNow();
 				
 				popupPrint.report.reportStatus = ReportStatusDict.getItem("初审").id;
@@ -163,6 +167,16 @@ package app.view
 		private function onDownloadPhoto(event:Event):void
 		{
 			attachProxy.downloadFile(popupPrint.report,"成型照片（初稿）");
+		}
+		
+		private function onUploadAttach(event:AppEvent):void
+		{
+			attachProxy.uploadImage();
+		}
+		
+		private function onDeleteAttach(event:AppEvent):void
+		{
+			attachProxy.deleteImage(event.data);
 		}
 		
 		private function onNaviImage(event:AppEvent):void

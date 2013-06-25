@@ -72,18 +72,20 @@ package app.view
 				case 3:
 					sql += "CInt(Sum(DateDiff('d', 初审日期, 复审日期))/COUNT(*)) AS 天数 FROM 报告信息 WHERE 复审日期 <> NULL AND  初审日期 <> NULL "
 					break;
-				case 4:
-					sql += "CInt(Sum(DateDiff('d', 复审日期, 修订日期))/COUNT(*)) AS 天数 FROM 报告信息 WHERE 修订日期 <> NULL AND  复审日期 <> NULL "
-					break;
-				case 5:
-					sql += "CInt(Sum(DateDiff('d', 修订日期, 装订日期))/COUNT(*)) AS 天数 FROM 报告信息 WHERE 装订日期 <> NULL AND  修订日期 <> NULL "
-					break;
-				case 6:
-					sql += "CInt(Sum(DateDiff('d', 装订日期, 签字日期))/COUNT(*)) AS 天数 FROM 报告信息 WHERE 签字日期 <> NULL AND  装订日期 <> NULL "
-					break;
+				//case 3:
+				//	sql += "CInt(Sum(DateDiff('d', 复审日期, 修订日期))/COUNT(*)) AS 天数 FROM 报告信息 WHERE 修订日期 <> NULL AND  复审日期 <> NULL "
+				//	break;
+				//case 5:
+				//	sql += "CInt(Sum(DateDiff('d', 修订日期, 装订日期))/COUNT(*)) AS 天数 FROM 报告信息 WHERE 装订日期 <> NULL AND  修订日期 <> NULL "
+				//	break;
+				//case 6:
+				//	sql += "CInt(Sum(DateDiff('d', 装订日期, 签字日期))/COUNT(*)) AS 天数 FROM 报告信息 WHERE 签字日期 <> NULL AND  装订日期 <> NULL "
+				//	break;
 			}
 			//sql += "FROM 报告信息 WHERE 案件状态 = " + ReportStatusDict.getItem("完成").id;
 			//sql += "FROM 报告信息 WHERE 签字日期 <> NULL ";
+			
+			sql += " AND 案件状态 <> 11 AND 案件状态 <> 10";
 			
 			if(naviStatisTime.comboPeriodTime.selectedIndex == 0)
 			{
