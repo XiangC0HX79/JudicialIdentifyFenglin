@@ -49,8 +49,8 @@ package app.view
 			naviStatisTime.comboPeriodMonthYear.selectedIndex = 0;
 			naviStatisTime.comboPeriodMonth.selectedIndex = (new Date).month;
 			
-			naviStatisTime.comboPeriodType.dataProvider = GroupDict.list;
-			naviStatisTime.comboPeriodType.selectedIndex = 0;
+			/*naviStatisTime.comboPeriodType.dataProvider = GroupDict.list;
+			naviStatisTime.comboPeriodType.selectedIndex = 0;*/
 			
 			naviStatisTime.comboPeriodProcess.selectedIndex = 0;
 		}
@@ -61,11 +61,29 @@ package app.view
 			switch(naviStatisTime.comboPeriodProcess.selectedIndex)
 			{
 				case 0:
-					sql += "CInt(Sum(DateDiff('d', 受理日期, 签字日期))/COUNT(*)) AS 天数 "
+					sql += "CInt(Sum(DateDiff('d', 受理日期, 签字日期))/COUNT(*)) AS 天数 FROM 报告信息 WHERE 签字日期 <> NULL "
+					break;
+				case 1:
+					sql += "CInt(Sum(DateDiff('d', 受理日期, 打印日期))/COUNT(*)) AS 天数 FROM 报告信息 WHERE 打印日期 <> NULL "
+					break;
+				case 2:
+					sql += "CInt(Sum(DateDiff('d', 打印日期, 初审日期))/COUNT(*)) AS 天数 FROM 报告信息 WHERE 初审日期 <> NULL AND  打印日期 <> NULL"
+					break;
+				case 3:
+					sql += "CInt(Sum(DateDiff('d', 初审日期, 复审日期))/COUNT(*)) AS 天数 FROM 报告信息 WHERE 复审日期 <> NULL AND  初审日期 <> NULL "
+					break;
+				case 4:
+					sql += "CInt(Sum(DateDiff('d', 复审日期, 修订日期))/COUNT(*)) AS 天数 FROM 报告信息 WHERE 修订日期 <> NULL AND  复审日期 <> NULL "
+					break;
+				case 5:
+					sql += "CInt(Sum(DateDiff('d', 修订日期, 装订日期))/COUNT(*)) AS 天数 FROM 报告信息 WHERE 装订日期 <> NULL AND  修订日期 <> NULL "
+					break;
+				case 6:
+					sql += "CInt(Sum(DateDiff('d', 装订日期, 签字日期))/COUNT(*)) AS 天数 FROM 报告信息 WHERE 签字日期 <> NULL AND  装订日期 <> NULL "
 					break;
 			}
 			//sql += "FROM 报告信息 WHERE 案件状态 = " + ReportStatusDict.getItem("完成").id;
-			sql += "FROM 报告信息 WHERE 签字日期 <> NULL ";
+			//sql += "FROM 报告信息 WHERE 签字日期 <> NULL ";
 			
 			if(naviStatisTime.comboPeriodTime.selectedIndex == 0)
 			{
