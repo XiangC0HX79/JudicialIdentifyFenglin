@@ -78,13 +78,11 @@ package app.view
 			{
 				naviStatisCount.listEntrustUnit = entrustUnitProxy.getListByType(naviStatisCount.comboType.selectedIndex - 1);
 				naviStatisCount.listEntrustUnit.addItemAt("所有委托单位",0);
-				
 				naviStatisCount.viewUnit.selectedIndex = 0;
 			}			
 			else
 			{
 				var listOffice:ArrayCollection = new ArrayCollection;
-				
 				var listUnit:ArrayCollection = entrustUnitProxy.getListByType(naviStatisCount.comboType.selectedIndex - 1);
 				for each(var entrustUnit:EntrustUnitVO in listUnit)
 				{
@@ -159,13 +157,20 @@ package app.view
 				{
 					var office:String = String(naviStatisCount.comboUnitOffice.selectedItem);
 					var station:String = String(naviStatisCount.comboUnitStation.selectedItem);
-					if(station == "所有派出所")
+					if(office == "所有公安分局")
 					{
-						sql += " 委托单位 LIKE '%" + office + "%' AND ";
+						sql += " 委托单位 LIKE '%公安分局%' AND ";
 					}
 					else
 					{
-						sql += " 委托单位 = '" + office + station + "' AND ";							
+						if(station == "所有派出所")
+						{
+							sql += " 委托单位 LIKE '%" + office + "%' AND ";
+						}
+						else
+						{
+							sql += " 委托单位 = '" + office + station + "' AND ";							
+						}
 					}
 				}
 			}
