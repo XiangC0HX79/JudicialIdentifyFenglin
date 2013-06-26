@@ -592,8 +592,8 @@ package app.view
 							
 							popupPanelCaseAcceptance.jurisdiction = loginProxy.checkRight("受理") 
 								&& (loginProxy.loginUser.id == popupPanelCaseAcceptance.report.accepter)
-								&& (popupPanelCaseAcceptance.report.ReportStatus.label == "重新受理")
-								&& (popupPanelCaseAcceptance.report.ReportStatus.label == "案件取消");
+								&& (popupPanelCaseAcceptance.report.ReportStatus.label != "重新受理")
+								&& (popupPanelCaseAcceptance.report.ReportStatus.label != "案件取消");
 						}
 						else
 						{
