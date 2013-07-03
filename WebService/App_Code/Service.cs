@@ -49,6 +49,33 @@ public class Service : System.Web.Services.WebService
         ClsGetData clsGetData = new ClsGetData("System.Data.OleDb", conStr);
         return clsGetData.GetTable(sql);
     }
+       
+    [WebMethod]
+    public int GetReportCount(String sql)
+    {
+        var clsGetData = new ClsGetData("System.Data.OleDb", conStr);
+
+        var s = "select count(*) from (" + sql + " )";
+
+        return (int)clsGetData.GetValue(s);
+    }
+
+    [WebMethod]
+    public DataTable GetReport(String sql,int pageIndex,int pageSize)
+    {
+        var clsGetData = new ClsGetData("System.Data.OleDb", conStr);
+
+        var s = "select count(*) from (" + sql + " )";
+
+        var c = (int)clsGetData.GetValue(s);
+               
+        var  size = ((pageIndex*pageSize > c)&&(c>0))?c%pageSize:pageSize;
+
+        s = "select * from (select top " + size + " * from (select top " + (pageIndex * pageSize) + " * from (" +
+                sql + " ) order by id desc) order by id) order by id desc";
+
+        return clsGetData.GetTable(s);
+    }
 
     [WebMethod]
     public DataTable SetTable(String sql)

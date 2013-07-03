@@ -49,7 +49,8 @@
 			public static const PRINTACCEPT:String = "printaccept";			
 			public static const PRINTFINANCIAL:String = "printfinancial";
 			
-			//[Bindable]public var listReport:ArrayCollection = new ArrayCollection;			
+			[Bindable]public var pageIndex:Number = 1;		
+			[Bindable]public var pageCount:Number = 1;			
 			
 			protected function gridReport_gridClickHandler(event:GridEvent):void
 			{
@@ -263,7 +264,7 @@
 				}
 				checkBoxStatus.selected = checked;
 				
-				dispatchEvent(new Event(REPORTFILTER));
+				dispatchEvent(new Event(REPORTSEARCH));
 			}
 			
 			protected function checkboxType_changeHandler(event:Event):void
@@ -275,7 +276,7 @@
 					group.selected = checkBox.selected;
 				}
 				
-				dispatchEvent(new Event(REPORTFILTER));
+				dispatchEvent(new Event(REPORTSEARCH));
 			}
 						
 			protected function checkboxStatus_changeHandler(event:Event):void
@@ -287,8 +288,54 @@
 					reportStatus.selected = checkBox.selected;
 				}
 				
+				dispatchEvent(new Event(REPORTSEARCH));
+			}
+			
+			protected function firstPage_buttonDownHandler(event:FlexEvent):void
+			{
+				if(pageCount <= 0)
+					return;
+				
+				pageIndex = 1;
 				dispatchEvent(new Event(REPORTFILTER));
 			}
+			
+			protected function prePage_buttonDownHandler(event:FlexEvent):void
+			{
+				if(pageCount <= 0)
+					return;
+				
+				if(pageIndex - 1 < 1)
+					return;
+				
+				pageIndex--;
+				
+				dispatchEvent(new Event(REPORTFILTER));
+				
+			}
+			
+			protected function nextPage_buttonDownHandler(event:FlexEvent):void
+			{
+				if(pageCount <= 0)
+					return;
+				
+				if(pageIndex + 1 > pageCount)
+					return;
+				
+				pageIndex++;
+				
+				dispatchEvent(new Event(REPORTFILTER));
+			}
+			
+			protected function lastPage_buttonDownHandler(event:FlexEvent):void
+			{
+				if(pageCount <= 0)
+					return;
+				
+				pageIndex = pageCount;
+				dispatchEvent(new Event(REPORTFILTER));
+			}
+			
 		]]>
 	</fx:Script>
 	
@@ -324,7 +371,7 @@
 			<s:SkinnableContainer skinClass="skins.skinHeadPanel" height="135" width="80">
 				<s:VGroup height="100%" horizontalAlign="center" width="100%">					
 					<s:Button label="查询" icon="@Embed('assets/image/btn_find.png')"
-							  buttonDown="dispatchEvent(new Event(REPORTFILTER));"/>
+							  buttonDown="dispatchEvent(new Event(REPORTSEARCH));"/>
 					<s:Button label="重置" icon="@Embed('assets/image/btn_back.png')"
 							  buttonDown="buttonReset_buttonDownHandler(event)"/>
 					<s:Button label="刷新" icon="@Embed('assets/image/btn_refresh.png')"
@@ -448,21 +495,21 @@
 				<s:VGroup height="100%" width="100%">
 					<s:HGroup verticalAlign="middle" width="100%">						
 						<s:Label text="编　　号："/>
-						<s:TextInput id="textNo" width="80"/>
+						<s:TextInput id="textNo" width="80" enter="dispatchEvent(new Event(REPORTSEARCH));" restrict="0-9"/>
 						<s:Label text="受检人："/>
-						<s:TextInput id="textChechPeople" width="100%"/>
+						<s:TextInput id="textChechPeople" width="100%" enter="dispatchEvent(new Event(REPORTSEARCH));"/>
 					</s:HGroup>
 					<s:HGroup verticalAlign="middle" width="100%">	
 						<s:Label text="委托单位："/>
-						<s:TextInput id="textUnit" width="100%" prompt="输入'缺委托书'可查询单位为空的案件"/>
+						<s:TextInput id="textUnit" width="100%" prompt="输入'缺委托书'可查询单位为空的案件" enter="dispatchEvent(new Event(REPORTSEARCH));"/>
 					</s:HGroup>		
 					<s:HGroup verticalAlign="middle" width="100%">	
 						<s:Label text="委托联系人："/>
-						<s:TextInput id="textPeople" width="100%"/>
+						<s:TextInput id="textPeople" width="100%" enter="dispatchEvent(new Event(REPORTSEARCH));"/>
 						<s:Label text="待处理案件："/>
 						<s:CheckBox id="checkFilter"
 									selected="true"
-									change="dispatchEvent(new Event(REPORTFILTER));"/>
+									change="dispatchEvent(new Event(REPORTSEARCH));"/>
 					</s:HGroup>		
 				</s:VGroup>
 				<mx:HRule width="100%"/>	
@@ -477,7 +524,7 @@
 						<s:Label text="跟踪反馈："/>
 						<s:CheckBox id="checkFeedback"
 									selected="false"
-									change="dispatchEvent(new Event(REPORTFILTER));"/>						
+									change="dispatchEvent(new Event(REPORTSEARCH));"/>						
 					</s:HGroup>
 				</s:VGroup>
 				<s:Button icon="@Embed('assets/image/btn_down.png')" label="受理表格下载"
@@ -491,11 +538,11 @@
 			<s:SkinnableContainer skinClass="skins.skinHeadPanel" height="135" id="panelFinancial">	
 				<s:VGroup height="100%">	
 					<subComponents:BaseCheckBox label="欠　　费：" id="checkDebt" skinClass="skins.skinBaseCheckBox"
-												change="dispatchEvent(new Event(REPORTFILTER));"/>	
+												change="dispatchEvent(new Event(REPORTSEARCH));"/>	
 					<subComponents:BaseCheckBox label="返　　佣：" id="checkCommision" skinClass="skins.skinBaseCheckBox"
-												change="dispatchEvent(new Event(REPORTFILTER));"/>	
+												change="dispatchEvent(new Event(REPORTSEARCH));"/>	
 					<subComponents:BaseCheckBox label="开　　票：" id="checkBill" skinClass="skins.skinBaseCheckBox"
-								change="dispatchEvent(new Event(REPORTFILTER));"/>	
+								change="dispatchEvent(new Event(REPORTSEARCH));"/>	
 				</s:VGroup>
 				<s:Button icon="@Embed('assets/image/btn_down.png')" label="财务表格下载"
 						  buttonDown="dispatchEvent(new Event(PRINTFINANCIAL));"/>
@@ -507,7 +554,7 @@
 		</s:HGroup>		
 	</s:Scroller>
 	
-	<s:DataGrid id="gridReport" left="0" right="0" top="{scrollTop.y + scrollTop.height}" bottom="0"
+	<s:DataGrid id="gridReport" left="0" right="0" top="{scrollTop.y + scrollTop.height}" bottom="25"
 				gridClick="gridReport_gridClickHandler(event)"  buttonMode="true" useHandCursor="true">
 		<s:columns>
 			<s:ArrayList>
@@ -533,4 +580,14 @@
 			</s:ArrayList>
 		</s:columns>		
 	</s:DataGrid>
+	
+	<s:HGroup bottom="0" verticalAlign="middle" paddingLeft="10" paddingBottom="2" paddingTop="2">
+		<s:Label text="{pageIndex}/{pageCount}"/>
+		<s:Button label="首页" buttonDown="firstPage_buttonDownHandler(event)"/>
+		<s:Button label="前页" buttonDown="prePage_buttonDownHandler(event)"/>
+		<s:Button label="后页" buttonDown="nextPage_buttonDownHandler(event)"/>
+		<s:Button label="末页" buttonDown="lastPage_buttonDownHandler(event)"/>
+		<s:NumericStepper height="20" minimum="{1}" maximum="{pageCount}"/>
+		<s:Button label="GO"/>
+	</s:HGroup>
 </s:Group>
