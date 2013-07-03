@@ -588,9 +588,12 @@ package app.view
 							popupPanelCaseAcceptance.report = notification.getBody()[1] as ReportVO;	
 							
 							popupPanelCaseAcceptance.editable = loginProxy.checkReport(popupPanelCaseAcceptance.report)
-								&&(popupPanelCaseAcceptance.report.ReportStatus.label == "受理");
+								&& (popupPanelCaseAcceptance.report.ReportStatus.label == "受理");
 							
-							popupPanelCaseAcceptance.jurisdiction = loginProxy.checkRight("受理") && (loginProxy.loginUser.id == popupPanelCaseAcceptance.report.accepter);
+							popupPanelCaseAcceptance.jurisdiction = loginProxy.checkRight("受理") 
+								&& (loginProxy.loginUser.id == popupPanelCaseAcceptance.report.accepter)
+								&& (popupPanelCaseAcceptance.report.ReportStatus.label != "重新受理")
+								&& (popupPanelCaseAcceptance.report.ReportStatus.label != "案件取消");
 						}
 						else
 						{

@@ -14,7 +14,7 @@
 			public static const SUBMIT:String = "submit";
 			public static const DOWNLOAD:String = "download";
 			
-			private function labelGroup(item:Object ,column:GridColumn):String
+			public function labelGroup(item:Object ,column:GridColumn):String
 			{
 				var group:GroupDict = GroupDict.dict[item.类别];
 				if(group == null)
@@ -23,7 +23,7 @@
 					return group.label;
 			}
 			
-			private function labelNo(item:Object ,column:GridColumn):String
+			public function labelNo(item:Object ,column:GridColumn):String
 			{
 				var no:String = String(item.编号);
 				var l:Number = no.length;
@@ -42,7 +42,14 @@
 	<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0">
 		<s:layout>
 			<s:HorizontalLayout verticalAlign="middle"/>
-		</s:layout>			
+		</s:layout>
+		<s:Label text="统计类型：" fontWeight="bold"/>
+		<s:DropDownList id="comboType">
+			<s:ArrayCollection>
+				<fx:String>初稿打印人</fx:String>
+				<fx:String>受理人C</fx:String>
+			</s:ArrayCollection>
+		</s:DropDownList>
 		<s:Label text="统计时段：" fontWeight="bold"/>
 		<s:DropDownList id="comboTime">
 			<s:ArrayCollection>
@@ -84,17 +91,29 @@
 				</s:HGroup>
 			</s:NavigatorContent>
 		</mx:ViewStack>		
-				
-		<s:Spacer width="20"/>
-		
-		<s:Label text="统计类型：" fontWeight="bold"/>
-		<s:DropDownList id="comboType">
+	</s:SkinnableContainer>				
+		<!--<s:Spacer width="20"/>-->
+	<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0">
+		<s:layout>
+			<s:HorizontalLayout verticalAlign="middle"/>
+		</s:layout>	
+		<s:Label text="评分小于等于：" fontWeight="bold"/>
+		<s:DropDownList id="comboRank" selectedIndex="9">
 			<s:ArrayCollection>
-				<fx:String>初稿打印人</fx:String>
-				<fx:String>受理人C</fx:String>
+				<fx:String>1</fx:String>
+				<fx:String>2</fx:String>
+				<fx:String>3</fx:String>
+				<fx:String>4</fx:String>
+				<fx:String>5</fx:String>
+				<fx:String>6</fx:String>
+				<fx:String>7</fx:String>
+				<fx:String>8</fx:String>
+				<fx:String>9</fx:String>
+				<fx:String>10</fx:String>
 			</s:ArrayCollection>
-		</s:DropDownList>		
-		
+		</s:DropDownList>	
+		<s:Label text="分" fontWeight="bold"/>
+		<s:Label width="100%" visible="false"/>
 		<s:Button width="100" label="统　　计" skinClass="skins.skinLoginButton" buttonDown="dispatchEvent(new Event(SUBMIT))"/>
 		<s:Button width="100" label="表格下载" skinClass="skins.skinLoginButton" buttonDown="dispatchEvent(new Event(DOWNLOAD))"/>
 	</s:SkinnableContainer>	

@@ -140,7 +140,11 @@ package app.model
 					}
 				}
 				
-				if(report.ReportStatus.label == "受理")
+				if(
+					(report.ReportStatus.label == "受理")
+					||
+					(report.ReportStatus.label == "打印")
+					)
 					attach.listImage.addItem(null);
 				
 				if(report.ReportStatus.label == "会诊")
