@@ -336,6 +336,19 @@
 				dispatchEvent(new Event(REPORTFILTER));
 			}
 			
+			protected function buttonGo_buttonDownHandler(event:FlexEvent):void
+			{
+				if(pageCount <= 0)
+					return;
+				
+				if((pageIndex < 1) || (pageIndex > pageCount))
+					return;
+					
+				pageIndex = numPageIndex.value;
+				
+				dispatchEvent(new Event(REPORTFILTER));
+			}
+			
 		]]>
 	</fx:Script>
 	
@@ -587,7 +600,7 @@
 		<s:Button label="前页" buttonDown="prePage_buttonDownHandler(event)"/>
 		<s:Button label="后页" buttonDown="nextPage_buttonDownHandler(event)"/>
 		<s:Button label="末页" buttonDown="lastPage_buttonDownHandler(event)"/>
-		<s:NumericStepper height="20" minimum="{1}" maximum="{pageCount}"/>
-		<s:Button label="GO"/>
+		<s:NumericStepper id="numPageIndex" height="20" minimum="{1}" maximum="{pageCount}"/>
+		<s:Button label="GO" buttonDown="buttonGo_buttonDownHandler(event)"/>
 	</s:HGroup>
 </s:Group>

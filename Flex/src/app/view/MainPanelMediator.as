@@ -222,6 +222,33 @@ package app.view
 				r += "反馈数量 > 0 AND ";				
 			}
 			
+			if(mainPanel.checkDebt.checked == BaseCheckBox.SELECTED)
+			{
+				r += "((是否返佣 AND (IIF(ISNULL(应缴金额),0,应缴金额) - IIF(ISNULL(已缴金额),0,已缴金额) - IIF(ISNULL(返佣金额),0,返佣金额)) > 0) OR ((NOT 是否返佣) AND (IIF(ISNULL(应缴金额),0,应缴金额) - IIF(ISNULL(已缴金额),0,已缴金额)) > 0)) AND ";
+			}
+			else if(mainPanel.checkDebt.checked == BaseCheckBox.UNSELECTED)
+			{				
+				r += "((是否返佣 AND (IIF(ISNULL(应缴金额),0,应缴金额) - IIF(ISNULL(已缴金额),0,已缴金额) - IIF(ISNULL(返佣金额),0,返佣金额)) <= 0) OR ((NOT 是否返佣) AND (IIF(ISNULL(应缴金额),0,应缴金额) - IIF(ISNULL(已缴金额),0,已缴金额)) <= 0)) AND ";
+			}
+			
+			if(mainPanel.checkCommision.checked == BaseCheckBox.SELECTED)
+			{
+				r += "是否返佣 AND ";
+			}
+			else if(mainPanel.checkCommision.checked == BaseCheckBox.UNSELECTED)
+			{				
+				r += "NOT 是否返佣 AND ";
+			}
+			
+			if(mainPanel.checkBill.checked == BaseCheckBox.SELECTED)
+			{
+				r += "((开票情况 = '发票') OR (开票情况 = '收据')) AND ";
+			}
+			else if(mainPanel.checkBill.checked == BaseCheckBox.UNSELECTED)
+			{				
+				r += "((IIF(ISNULL(开票情况),'',开票情况) <> '发票') AND (IIF(ISNULL(开票情况),'',开票情况) <> '收据')) AND ";
+			}
+			
 			if(r != "")
 				r = r.substr(0,r.length - 5);
 			
@@ -411,8 +438,7 @@ package app.view
 		private function onPrintAccept(event:Event):void
 		{
 			var sql:String = "SELECT * FROM " + WebServiceCommand.VIEW_REPORT;
-			if(whereClause != "")
-				sql += " WHERE " + whereClause;
+			sql += " WHERE 案件状态  <> 10 AND " + whereClause + " ORDER BY ID";
 			
 			sendNotification(ApplicationFacade.NOTIFY_WEBSERVICE_SEND,
 				["GetTable",onGetTable
@@ -423,11 +449,8 @@ package app.view
 			{				
 				var dataPro:ArrayCollection = new ArrayCollection;
 				for each(var item:Object in result)
-				{
-					var r:ReportVO = new ReportVO(item);
-					if(r.ReportStatus.label != "重新受理")
-						dataPro.addItem(r);
-				}
+					dataPro.addItem(new ReportVO(item));
+					
 				sendNotification(ApplicationFacade.NOTIFY_POPUP_SHOW
 					,[facade.retrieveMediator(PopupPrintSignMediator.NAME).getViewComponent(),dataPro]);	
 			}
@@ -444,17 +467,23 @@ package app.view
 		
 		private function onPrintFinancial(event:Event):void
 		{
-			var dataPro:ArrayCollection = new ArrayCollection;
-			for each(var item:ReportVO in mainPanel.gridReport.dataProvider)
-			{
-				if(item.ReportStatus.label != "重新受理")
-				{
-					dataPro.addItem(item);
-				}
-			}
+			var sql:String = "SELECT * FROM " + WebServiceCommand.VIEW_REPORT;
+			sql += " WHERE 案件状态  <> 10 AND " + whereClause + " ORDER BY ID";
 			
-			sendNotification(ApplicationFacade.NOTIFY_POPUP_SHOW
-				,[facade.retrieveMediator(PopupPrintFinancialMediator.NAME).getViewComponent(),dataPro]);	
+			sendNotification(ApplicationFacade.NOTIFY_WEBSERVICE_SEND,
+				["GetTable",onGetTable
+					,[sql]
+				]);
+			
+			function onGetTable(result:ArrayCollection):void
+			{				
+				var dataPro:ArrayCollection = new ArrayCollection;
+				for each(var item:Object in result)
+				dataPro.addItem(new ReportVO(item));
+			
+				sendNotification(ApplicationFacade.NOTIFY_POPUP_SHOW
+					,[facade.retrieveMediator(PopupPrintFinancialMediator.NAME).getViewComponent(),dataPro]);	
+			}
 		}
 		
 		override public function listNotificationInterests():Array
