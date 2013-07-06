@@ -420,7 +420,7 @@ package app.view
 			}*/
 			
 			sendNotification(ApplicationFacade.NOTIFY_POPUP_SHOW
-				,[facade.retrieveMediator(PopupNaviImageMediator.NAME).getViewComponent(),event.data]);	
+				,[facade.retrieveMediator(PopupNaviImageMediator.NAME).getViewComponent(),popupPanelCaseAcceptance.report,popupPanelCaseAcceptance.listAttach,event.data]);	
 		}
 		
 		private function listGroupChange(event:Event):void

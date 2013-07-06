@@ -239,9 +239,11 @@ package app.model
 				var attachImage:AttachImageVO = listImage[imageIndex] as AttachImageVO;
 				if(attachImage != null)
 				{
-					var url:String =  WebServiceCommand.WSDL + "Download.aspx";
+					var url:String =  WebServiceCommand.WSDL + "DownloadThumbnail.aspx";
 					url += "?reportNo=" + reportNo;
 					url += "&fileName=" + attachImage.bitmapName;
+					url += "&w=100";
+					url += "&h=100";
 										
 					var downloadURL:URLRequest = new URLRequest(encodeURI(url));	
 					downloadURL.method = URLRequestMethod.POST;
