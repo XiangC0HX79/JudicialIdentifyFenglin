@@ -55,7 +55,7 @@ package app.model
 			return data as AttachVO;
 		}
 		
-		public function refresh(report:ReportVO,type:String = NONE):void
+		public function refresh(report:ReportVO,type:String = NONE,jurisdiction:Boolean = false):void
 		{	
 			attach.listImage.removeAll();	
 			attach.listConsultImage.removeAll();
@@ -140,11 +140,7 @@ package app.model
 					}
 				}
 				
-				if(
-					(report.ReportStatus.label == "受理")
-					||
-					(report.ReportStatus.label == "打印")
-					)
+				if(jurisdiction)
 					attach.listImage.addItem(null);
 				
 				if(report.ReportStatus.label == "会诊")

@@ -61,6 +61,13 @@
 				var matchingItems:Vector.<int> = new Vector.<int>;
 				return matchingItems;
 			}
+			
+			protected function comboEntrustPeople_changeHandler(event:IndexChangeEvent):void
+			{
+				if(comboEntrustPeople.selectedItem)
+					textUnitContact.text = comboEntrustPeople.selectedItem.phone;
+			}
+			
 		]]>
 	</fx:Script>
 		
@@ -108,7 +115,8 @@
 			<s:HGroup width="50%" verticalAlign="middle">	
 				<s:Label text="委托联系人：" fontWeight="bold"/>
 				<subComponents:BaseComboBox width="100%" dataProvider="{listEntrustPeople}" id="comboEntrustPeople" 
-							selectedItem="{report.unitPeople}"
+							selectedItem="{report.unitPeople}" 
+							change="comboEntrustPeople_changeHandler(event)"
 							textchange="dispatchEvent(new Event(COMBOPEOPLECHANGE));"
 							itemMatchingFunction="matchingFunction"/>
 			</s:HGroup>
@@ -207,7 +215,7 @@
 			<s:TextInput width="100%" id="textRemark" text="{report.remark}"/>
 		</s:SkinnableContainer>	
 		
-		<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0" enabled="{editable}">
+		<s:SkinnableContainer width="100%" backgroundColor="0xFFFFFF" backgroundAlpha="0" enabled="{editable || jurisdiction}">
 			<s:layout>
 				<s:HorizontalLayout/>
 			</s:layout>

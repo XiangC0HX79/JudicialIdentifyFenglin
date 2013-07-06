@@ -215,7 +215,7 @@ package app.view
 		private function onNaviImage(event:AppEvent):void
 		{			
 			sendNotification(ApplicationFacade.NOTIFY_POPUP_SHOW
-				,[facade.retrieveMediator(PopupNaviImageMediator.NAME).getViewComponent(),event.data]);	
+				,[facade.retrieveMediator(PopupNaviImageMediator.NAME).getViewComponent(),popupLastExamine.report,popupLastExamine.attach.listImage,event.data]);	
 		}
 		
 		override public function listNotificationInterests():Array

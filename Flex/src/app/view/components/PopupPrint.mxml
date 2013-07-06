@@ -76,8 +76,7 @@
 			</s:layout>
 			<s:Label text="　初步照片：" fontWeight="bold" paddingTop="5"/>
 			<s:List dataProvider="{attach.listImage}" width="100%" height="118" horizontalScrollPolicy="on"
-					itemRenderer="app.view.components.subComponents.ItemRendererAttachStatic"
-					itemRenderer.EDIT="app.view.components.subComponents.ItemRendererAttach">
+					itemRenderer="app.view.components.subComponents.ItemRendererAttachStatic">
 				<s:layout>
 					<s:HorizontalLayout/>
 				</s:layout>		

@@ -618,7 +618,7 @@ package app.view
 							popupPanelCaseAcceptance.comboAcceptType.selectedItem = preAccepterType;
 						}
 						
-						attachProxy.refresh(popupPanelCaseAcceptance.report,AttachProxy.IMAGE);
+						attachProxy.refresh(popupPanelCaseAcceptance.report,AttachProxy.IMAGE,popupPanelCaseAcceptance.jurisdiction);
 						
 						popupPanelCaseAcceptance.listAccepterA = userProxy.listAccepterA;
 						var accepterA:UserVO = userProxy.getUser(popupPanelCaseAcceptance.report.accepterA);
