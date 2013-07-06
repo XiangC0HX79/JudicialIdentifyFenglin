@@ -146,10 +146,10 @@ package app.view
 			}
 			else if(naviStatisCount.comboTypeCount.selectedIndex == 1)
 			{
-				sql = "SELECT COUNT(*) AS 案件数量, IIF(IsNull( 委托单位 ), '单位为空', 委托单位 ) AS 单位  FROM " + WebServiceCommand.VIEW_REPORT + " WHERE ";
-				
 				if(naviStatisCount.comboType.selectedIndex != 3)
 				{
+					sql = "SELECT COUNT(*) AS 案件数量, IIF(IsNull( 委托单位 ), '单位为空', 委托单位 ) AS 单位  FROM " + WebServiceCommand.VIEW_REPORT + " WHERE ";
+					
 					if(naviStatisCount.comboUnitCount.textInput.text != "所有委托单位")
 					{
 						sql += " 委托单位 = '" + naviStatisCount.comboUnitCount.textInput.text + "' AND ";
@@ -161,13 +161,17 @@ package app.view
 					var station:String = String(naviStatisCount.comboUnitStation.selectedItem);
 					if(office == "所有公安分局")
 					{
-						sql += " 委托单位 LIKE '%公安分局%' AND ";
+						sql = "SELECT COUNT(*) AS 案件数量, LEFT(委托单位,Instr(委托单位,'公安分局') + 3) AS 单位  FROM " + WebServiceCommand.VIEW_REPORT + " WHERE ";
+						
+						sql += " Instr(委托单位,'公安分局') > 0 AND ";
 					}
 					else
 					{
+						sql = "SELECT COUNT(*) AS 案件数量, IIF(IsNull( 委托单位 ), '单位为空', 委托单位 ) AS 单位  FROM " + WebServiceCommand.VIEW_REPORT + " WHERE ";
+						
 						if(station == "所有派出所")
 						{
-							sql += " 委托单位 LIKE '%" + office + "%' AND ";
+							sql += " Instr(委托单位,'" + office + "') > 0 AND ";
 						}
 						else
 						{
@@ -216,7 +220,15 @@ package app.view
 			}
 			else if(naviStatisCount.comboTypeCount.selectedIndex == 1)
 			{
-				sql += " GROUP BY 委托单位";
+				if((naviStatisCount.comboType.selectedIndex == 3)
+					&& (office == "所有公安分局"))
+				{
+					sql += " GROUP BY LEFT(委托单位,Instr(委托单位,'公安分局') + 3)";
+				}
+				else
+				{
+					sql += " GROUP BY 委托单位";					
+				}
 			}
 			else
 			{

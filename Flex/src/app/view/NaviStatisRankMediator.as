@@ -66,21 +66,50 @@ package app.view
 		
 		private function onDownload(event:Event):void
 		{
-			var data:String = "";
-			for each(var item:Object in naviStatisRank.gridReport.dataProvider)
-			{
-				var c:GridColumn;
-				data += item.年度  + "/C/";
-				data += naviStatisRank.labelGroup(item,c)  + "/C/";
-				data += naviStatisRank.labelNo(item,c)  + "/C/";
-				data += item.姓名  + "/C/";
-				data += item.评分  + "/R/";
-			}
-			
 			if(naviStatisRank.comboType.selectedIndex == 0)
+			{			
+				var data:String = "";
+				for each(var item:Object in naviStatisRank.gridReport.dataProvider)
+				{
+					data += item.年度  + "/C/";
+					data += naviStatisRank.labelGroup(item,null)  + "/C/";
+					data += naviStatisRank.labelNo(item,null)  + "/C/";
+					data += item.姓名  + "/C/";
+					data += item.评分  + "/R/";
+				}
+				
 				print(data,"评分统计_打印人");
-			else
+			}
+			else if(naviStatisRank.comboType.selectedIndex == 1)
+			{
+				data = "";
+				for each(item in naviStatisRank.gridReport.dataProvider)
+				{
+					data += item.年度  + "/C/";
+					data += naviStatisRank.labelGroup(item,null)  + "/C/";
+					data += naviStatisRank.labelNo(item,null)  + "/C/";
+					data += item.姓名  + "/C/";
+					data += item.评分  + "/R/";
+				}
+				
 				print(data,"评分统计_受理人C");
+			}
+			else
+			{
+				data = "";
+				for each(item in naviStatisRank.gridReportAll.dataProvider)
+				{
+					data += item.年度  + "/C/";
+					data += naviStatisRank.labelGroup(item,null)  + "/C/";
+					data += naviStatisRank.labelNo(item,null)  + "/C/";
+					data += item.打印人姓名  + "/C/";
+					data += item.初稿评分  + "/C/";
+					data += item.受理人C姓名  + "/C/";
+					data += item.初审评分  + "/R/";
+				}
+				
+				print(data,"评分统计_所有评分");
+			}
 		}
 		
 		private function print(data:String,name:String):void
@@ -137,12 +166,17 @@ package app.view
 				sql += "打印人 AS 用户,打印人姓名 AS 姓名,(初审分数 + 1) AS 评分 FROM " + WebServiceCommand.VIEW_REPORT
 				+ " WHERE 初审分数 <> -1 and 初审分数 < " + naviStatisRank.comboRank.labelDisplay.text;
 			}
-			else
+			else if(naviStatisRank.comboType.selectedIndex == 1)
 			{
 				naviStatisRank.columnName.headerText = "受理人C";
 				
 				sql += "受理人C AS 用户,受理人C姓名 AS 姓名,(复审分数 + 1) AS 评分 FROM " + WebServiceCommand.VIEW_REPORT
 					+ " WHERE 复审分数 <> -1 and 复审分数 < " + naviStatisRank.comboRank.labelDisplay.text;
+			}
+			else
+			{
+				sql += "打印人姓名,(初审分数 + 1) AS 初稿评分,受理人C姓名,(复审分数 + 1) AS 初审评分 FROM " + WebServiceCommand.VIEW_REPORT
+					+ " WHERE 初审分数 <> -1 AND 复审分数 <> -1";
 			}
 			
 			if(naviStatisRank.comboTime.selectedIndex == 0)
@@ -157,6 +191,7 @@ package app.view
 				sql += " AND Year(受理日期) = " + naviStatisRank.comboMonthYear.labelDisplay.text 
 					+ " AND Month(受理日期) = " + (naviStatisRank.comboMonth.selectedIndex + 1);
 			}
+			sql += " ORDER BY ID"; 
 			
 			sendNotification(ApplicationFacade.NOTIFY_WEBSERVICE_SEND,
 				["GetTable",onGetResult
@@ -165,41 +200,47 @@ package app.view
 			
 			function onGetResult(result:ArrayCollection):void
 			{						
-				naviStatisRank.gridReport.dataProvider = result;
-				
-				var userDict:Dictionary = new Dictionary
-				
-				for each(var item:Object in result)
+				if(naviStatisRank.comboType.selectedIndex < 2)
 				{
-					var user:Object = userDict[item.用户];
-					if(user == null)
-					{
-						user = {};
-						user.姓名 = item.姓名;
-						user.评分 = item.评分;
-						user.数量 = 1;
-						
-						userDict[item.用户] = user;
-					}
-					else
-					{
-						user.评分 += item.评分;
-						user.数量 ++;
-					}
-				}
-				
-				var chartDatapro:ArrayCollection = new ArrayCollection;
-				for each(user in userDict)
-				{
-					var chartItem:Object = {};
-					chartItem.姓名 = user.姓名;
-					chartItem.评分 = Number(Number(user.评分 / user.数量).toFixed(2));
+					naviStatisRank.gridReport.dataProvider = result;
 					
-					chartDatapro.addItem(chartItem);
+					var userDict:Dictionary = new Dictionary
+					
+					for each(var item:Object in result)
+					{
+						var user:Object = userDict[item.用户];
+						if(user == null)
+						{
+							user = {};
+							user.姓名 = item.姓名;
+							user.评分 = item.评分;
+							user.数量 = 1;
+							
+							userDict[item.用户] = user;
+						}
+						else
+						{
+							user.评分 += item.评分;
+							user.数量 ++;
+						}
+					}
+					
+					var chartDatapro:ArrayCollection = new ArrayCollection;
+					for each(user in userDict)
+					{
+						var chartItem:Object = {};
+						chartItem.姓名 = user.姓名;
+						chartItem.评分 = Number(Number(user.评分 / user.数量).toFixed(2));
+						
+						chartDatapro.addItem(chartItem);
+					}
+					
+					naviStatisRank.columnChart.dataProvider = chartDatapro;	
 				}
-				
-				naviStatisRank.columnChart.dataProvider = chartDatapro;	
-				
+				else
+				{
+					naviStatisRank.gridReportAll.dataProvider = result;
+				}
 			}
 		}
 		
