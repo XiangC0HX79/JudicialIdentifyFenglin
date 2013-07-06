@@ -49,6 +49,33 @@ public class Service : System.Web.Services.WebService
         ClsGetData clsGetData = new ClsGetData("System.Data.OleDb", conStr);
         return clsGetData.GetTable(sql);
     }
+       
+    [WebMethod]
+    public int GetReportCount(String sql)
+    {
+        var clsGetData = new ClsGetData("System.Data.OleDb", conStr);
+
+        var s = "select count(*) from (" + sql + " )";
+
+        return (int)clsGetData.GetValue(s);
+    }
+
+    [WebMethod]
+    public DataTable GetReport(String sql,int pageIndex,int pageSize)
+    {
+        var clsGetData = new ClsGetData("System.Data.OleDb", conStr);
+
+        var s = "select count(*) from (" + sql + " )";
+
+        var c = (int)clsGetData.GetValue(s);
+               
+        var  size = ((pageIndex*pageSize > c)&&(c>0))?c%pageSize:pageSize;
+
+        s = "select * from (select top " + size + " * from (select top " + (pageIndex * pageSize) + " * from (" +
+                sql + " ) order by id desc) order by id) order by id desc";
+
+        return clsGetData.GetTable(s);
+    }
 
     [WebMethod]
     public DataTable SetTable(String sql)
@@ -182,7 +209,8 @@ public class Service : System.Web.Services.WebService
         String fields = "编号,类别,年度,受理日期,受理人,委托单位,委托单位联系方式" +
                 ",委托单位联系人,受检人,受检人联系方式,受理地点,影像资料" +
                 ",受理人A,受理人B,受理人C,备注,预计报告日期,预计报告类型,打印人" +
-                ",缴费方式,应缴金额,已缴金额,退费金额,是否返佣,返佣金额,开票情况,票号,开票金额";
+                ",缴费方式,应缴金额,已缴金额,退费金额,是否返佣,返佣金额,开票情况,票号,开票金额" + 
+                ",会诊接受日期,会诊日期,会诊人,其他会诊人";
         sql = "INSERT INTO 报告信息 (案件状态," + fields + ") SELECT 1," + fields + " FROM 报告信息 WHERE ID = " + id;
         result = clsGetData.SetTable(sql);
         if (result.TableName == "Error")
@@ -204,10 +232,23 @@ public class Service : System.Web.Services.WebService
             String year = report["年度"].ToString();
             String group = report["参数值"].ToString();
 
-            String curDir = Server.MapPath("Report") + "\\" + "沪枫林 " + year + " " + group + " " + getSubNo(no, subID) + " 号";
-            String backDir = Server.MapPath("Report") + "\\" + "沪枫林 " + year + " " + group + " " + getSubNo(no, subID + 1) + " 号";
+            String curDir = Server.MapPath("Report") + "\\" + "沪枫林 " + year + " " + group + " " + getSubNo(no, 0) +
+                            " 号";
+            String backDir = Server.MapPath("Report") + "\\" + "沪枫林 " + year + " " + group + " " +
+                             getSubNo(no, subID + 1) + " 号";
 
             Directory.Move(curDir, backDir);
+
+            Directory.CreateDirectory(curDir);
+
+            foreach (String pathName in Directory.GetFiles(backDir))
+            {
+                String fileName = pathName.Substring(pathName.LastIndexOf('\\') + 1);
+                if ((fileName.IndexOf("初步照片", 0, StringComparison.Ordinal) >= 0) || (fileName.IndexOf("会诊", 0, StringComparison.Ordinal) >= 0))
+                {
+                    File.Copy(backDir + "\\" + fileName, curDir + "\\" + fileName);
+                }
+            }
         }
         catch (Exception ex)
         {

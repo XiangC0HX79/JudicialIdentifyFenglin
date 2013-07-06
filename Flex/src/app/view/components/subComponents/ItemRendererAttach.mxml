@@ -57,7 +57,7 @@
 				else
 				{
 					var dataGroup:DataGroup = this.parent as DataGroup;
-					dispatchEvent(new AppEvent(AppEvent.NAVIATTACH,[dataGroup.dataProvider,dataGroup.dataProvider.getItemIndex(data)],true));						
+					dispatchEvent(new AppEvent(AppEvent.NAVIATTACH,this.itemIndex,true));						
 				}
 			}
 			

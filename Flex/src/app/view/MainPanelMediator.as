@@ -1,6 +1,7 @@
 package app.view
 {
 	import app.ApplicationFacade;
+	import app.controller.WebServiceCommand;
 	import app.model.LoginProxy;
 	import app.model.ReportProxy;
 	import app.model.ReportYearProxy;
@@ -67,6 +68,8 @@ package app.view
 			reportYearProxy = facade.retrieveProxy(ReportYearProxy.NAME) as ReportYearProxy;
 			reportProxy = facade.retrieveProxy(ReportProxy.NAME) as ReportProxy;
 			loginProxy = facade.retrieveProxy(LoginProxy.NAME) as LoginProxy;
+			
+			mainPanel.gridReport.dataProvider = reportProxy.list;
 		}
 		
 		protected function get mainPanel():MainPanel
@@ -104,18 +107,152 @@ package app.view
 		}
 		
 		private function onReportFilter(event:Event):void
-		{						
-			reportProxy.list.refresh();
+		{				
+			reportProxy.filter(whereClause,mainPanel.pageIndex);
 		}
-				
+		
 		private function onReportSearch(event:Event):void
 		{				
-			reportProxy.refresh(mainPanel.sDateBegin,mainPanel.sDateEnd,filterFunction,handleFunction);
+			reportProxy.refresh(whereClause,mainPanel.pageIndex);
+		}
+		
+		private function get whereClause():String
+		{			
+			var r:String = "";
+			if(mainPanel.sDateEnd != "")
+				r = "受理日期  <= #" + mainPanel.sDateEnd + "# AND 受理日期 >= #" + mainPanel.sDateBegin + "# AND ";
 			
-			function handleFunction():void
+			for each(var group:GroupDict in mainPanel.dataGroupGroup.dataProvider)
 			{
-				mainPanel.gridReport.dataProvider = reportProxy.list;
+				if(!group.selected)
+					r += "类别  <> " + group.id + " AND ";
 			}
+			
+			for each(var reportStatus:ReportStatusDict in mainPanel.dataGroupStatus.dataProvider)
+			{
+				if(!reportStatus.selected)
+					r += "案件状态  <> " + reportStatus.id + " AND ";
+			}
+			
+			if(mainPanel.textNo.text != "")
+			{
+				r += "InStr(CStr(编号),'" + Number(mainPanel.textNo.text) + "') > 0 AND ";
+			}
+			
+			if(mainPanel.textNo.text != "")
+			{
+				r += "InStr(CStr(编号),'" + Number(mainPanel.textNo.text) + "') > 0 AND ";
+			}
+			
+			if(mainPanel.textChechPeople.text != "")
+			{
+				r += "InStr(受检人,'" + mainPanel.textChechPeople.text + "') > 0 AND ";
+			}
+			
+			if(mainPanel.textUnit.text.indexOf("缺委托书") >= 0)
+			{
+				r += "委托单位 = '' AND ";
+			}
+			else if(mainPanel.textUnit.text != "")
+			{
+				r += "InStr(委托单位,'" + mainPanel.textUnit.text + "') > 0 AND ";		
+			}
+			
+			if(mainPanel.textPeople.text != "")
+			{
+				r += "InStr(委托单位联系人,'" + mainPanel.textPeople.text + "') > 0 AND ";
+			}
+			
+			if(mainPanel.checkFilter.selected)
+			{
+				var s:String = "";
+				
+				if(loginProxy.checkRight("受理"))
+					s += "(案件状态 = 1 AND 受理人 = " + loginProxy.loginUser.id + ") OR ";
+				
+				if(loginProxy.checkRight("打印"))
+					s += "(案件状态 = 2 AND 打印人 = " + loginProxy.loginUser.id + ") OR ";
+				
+				if(loginProxy.checkRight("初审"))
+					s += "(案件状态 = 3 AND (" +
+						"初审人 = " + loginProxy.loginUser.id + " OR " +
+						"(初审接受日期 IS NULL AND 类别 in (SELECT 类型ID FROM 类型用户表 WHERE 用户ID = " + loginProxy.loginUser.id + "))" +
+						")) OR ";
+				
+				if(loginProxy.checkRight("复审"))
+					s += "(案件状态 = 4 AND (" +
+						"复审人 = " + loginProxy.loginUser.id + " OR " +
+						"(复审接受日期 IS NULL AND 类别 in (SELECT 类型ID FROM 类型用户表 WHERE 用户ID = " + loginProxy.loginUser.id + "))" +
+						")) OR ";
+				
+				if(loginProxy.checkRight("修订"))
+					s += "(案件状态 = 5 AND 打印人 = " + loginProxy.loginUser.id + ") OR ";
+				
+				if(loginProxy.checkRight("装订"))
+					s += "(案件状态 = 6 AND (" +
+						"装订人 = " + loginProxy.loginUser.id + " OR 装订接受日期 IS NULL" +
+						")) OR ";
+				
+				if(loginProxy.checkRight("签字"))
+					s += "案件状态 = 7 OR ";
+				
+				if(loginProxy.checkRight("发放报告"))
+					s += "(案件状态 = 8 AND 受理人 = " + loginProxy.loginUser.id + ") OR ";
+				
+				if(loginProxy.checkRight("归档"))
+					s += "(案件状态 = 8 AND (" +
+						"归档人 = " + loginProxy.loginUser.id + " OR 归档接受日期 IS NULL" +
+						")) OR ";
+				
+				if(loginProxy.checkRight("缴费"))
+					s += "案件状态  <> 10 OR ";
+				
+				if(loginProxy.checkRight("会诊"))
+					s += "案件状态 = 13 OR ";
+				
+				
+				if(s != "")
+				{
+					r += "(" + s.substr(0,s.length - 4) + ") AND ";
+				}
+			}
+			
+			if(mainPanel.checkFeedback.selected)
+			{
+				r += "反馈数量 > 0 AND ";				
+			}
+			
+			if(mainPanel.checkDebt.checked == BaseCheckBox.SELECTED)
+			{
+				r += "((是否返佣 AND (IIF(ISNULL(应缴金额),0,应缴金额) - IIF(ISNULL(已缴金额),0,已缴金额) - IIF(ISNULL(返佣金额),0,返佣金额)) > 0) OR ((NOT 是否返佣) AND (IIF(ISNULL(应缴金额),0,应缴金额) - IIF(ISNULL(已缴金额),0,已缴金额)) > 0)) AND ";
+			}
+			else if(mainPanel.checkDebt.checked == BaseCheckBox.UNSELECTED)
+			{				
+				r += "((是否返佣 AND (IIF(ISNULL(应缴金额),0,应缴金额) - IIF(ISNULL(已缴金额),0,已缴金额) - IIF(ISNULL(返佣金额),0,返佣金额)) <= 0) OR ((NOT 是否返佣) AND (IIF(ISNULL(应缴金额),0,应缴金额) - IIF(ISNULL(已缴金额),0,已缴金额)) <= 0)) AND ";
+			}
+			
+			if(mainPanel.checkCommision.checked == BaseCheckBox.SELECTED)
+			{
+				r += "是否返佣 AND ";
+			}
+			else if(mainPanel.checkCommision.checked == BaseCheckBox.UNSELECTED)
+			{				
+				r += "NOT 是否返佣 AND ";
+			}
+			
+			if(mainPanel.checkBill.checked == BaseCheckBox.SELECTED)
+			{
+				r += "((开票情况 = '发票') OR (开票情况 = '收据')) AND ";
+			}
+			else if(mainPanel.checkBill.checked == BaseCheckBox.UNSELECTED)
+			{				
+				r += "((IIF(ISNULL(开票情况),'',开票情况) <> '发票') AND (IIF(ISNULL(开票情况),'',开票情况) <> '收据')) AND ";
+			}
+			
+			if(r != "")
+				r = r.substr(0,r.length - 5);
+			
+			return r;
 		}
 		
 		private function filterFunction(item:ReportVO):Boolean
@@ -300,7 +437,24 @@ package app.view
 		
 		private function onPrintAccept(event:Event):void
 		{
-			var dataPro:ArrayCollection = new ArrayCollection;
+			var sql:String = "SELECT * FROM " + WebServiceCommand.VIEW_REPORT;
+			sql += " WHERE 案件状态  <> 10 AND " + whereClause + " ORDER BY ID";
+			
+			sendNotification(ApplicationFacade.NOTIFY_WEBSERVICE_SEND,
+				["GetTable",onGetTable
+					,[sql]
+				]);
+			
+			function onGetTable(result:ArrayCollection):void
+			{				
+				var dataPro:ArrayCollection = new ArrayCollection;
+				for each(var item:Object in result)
+					dataPro.addItem(new ReportVO(item));
+					
+				sendNotification(ApplicationFacade.NOTIFY_POPUP_SHOW
+					,[facade.retrieveMediator(PopupPrintSignMediator.NAME).getViewComponent(),dataPro]);	
+			}
+		/*	var dataPro:ArrayCollection = new ArrayCollection;
 			for each(var item:ReportVO in mainPanel.gridReport.dataProvider)
 			{
 				if(item.ReportStatus.label != "重新受理")
@@ -308,24 +462,28 @@ package app.view
 					dataPro.addItem(item);
 				}
 			}
-			
-			sendNotification(ApplicationFacade.NOTIFY_POPUP_SHOW
-				,[facade.retrieveMediator(PopupPrintSignMediator.NAME).getViewComponent(),dataPro]);	
+			*/
 		}
 		
 		private function onPrintFinancial(event:Event):void
 		{
-			var dataPro:ArrayCollection = new ArrayCollection;
-			for each(var item:ReportVO in mainPanel.gridReport.dataProvider)
-			{
-				if(item.ReportStatus.label != "重新受理")
-				{
-					dataPro.addItem(item);
-				}
-			}
+			var sql:String = "SELECT * FROM " + WebServiceCommand.VIEW_REPORT;
+			sql += " WHERE 案件状态  <> 10 AND " + whereClause + " ORDER BY ID";
 			
-			sendNotification(ApplicationFacade.NOTIFY_POPUP_SHOW
-				,[facade.retrieveMediator(PopupPrintFinancialMediator.NAME).getViewComponent(),dataPro]);	
+			sendNotification(ApplicationFacade.NOTIFY_WEBSERVICE_SEND,
+				["GetTable",onGetTable
+					,[sql]
+				]);
+			
+			function onGetTable(result:ArrayCollection):void
+			{				
+				var dataPro:ArrayCollection = new ArrayCollection;
+				for each(var item:Object in result)
+				dataPro.addItem(new ReportVO(item));
+			
+				sendNotification(ApplicationFacade.NOTIFY_POPUP_SHOW
+					,[facade.retrieveMediator(PopupPrintFinancialMediator.NAME).getViewComponent(),dataPro]);	
+			}
 		}
 		
 		override public function listNotificationInterests():Array
@@ -333,7 +491,8 @@ package app.view
 			return [
 				ApplicationFacade.NOTIFY_APP_INIT,
 				ApplicationFacade.NOTIFY_LOGIN_SUCCESS,
-				ApplicationFacade.NOTIFY_REPORT_REFRESH
+				ApplicationFacade.NOTIFY_REPORT_REFRESH,
+				ApplicationFacade.NOTIFY_REPORT_PAGECOUNT
 			];
 		}
 		
@@ -415,17 +574,17 @@ package app.view
 					}
 					mainPanel.dataGroupStatus.dataProvider = arr;
 					
-					reportProxy.refresh(mainPanel.sDateBegin,mainPanel.sDateEnd,filterFunction,handleFunction);
+					reportProxy.refresh(whereClause);
 															
 					mainPanel.textNo.text = "";
 					mainPanel.textUnit.text = "";
 					mainPanel.textPeople.text = "";
 					break;
-			}
-			
-			function handleFunction():void
-			{
-				mainPanel.gridReport.dataProvider = reportProxy.list;
+				
+				case ApplicationFacade.NOTIFY_REPORT_PAGECOUNT:
+					mainPanel.pageIndex = 1;
+					mainPanel.pageCount = Number(notification.getBody());
+					break;
 			}
 		}
 	}

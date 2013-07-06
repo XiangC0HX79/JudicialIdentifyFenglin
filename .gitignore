@@ -1,0 +1,7 @@
+bin-debug
+bin-release
+flex_bin
+WebService/App_Data/*
+WebService/Backup/*
+WebService/Report/*
+WebService/ExcelXlt/Temp/*

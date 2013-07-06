@@ -420,7 +420,7 @@ package app.view
 			}*/
 			
 			sendNotification(ApplicationFacade.NOTIFY_POPUP_SHOW
-				,[facade.retrieveMediator(PopupNaviImageMediator.NAME).getViewComponent(),event.data]);	
+				,[facade.retrieveMediator(PopupNaviImageMediator.NAME).getViewComponent(),popupPanelCaseAcceptance.report,popupPanelCaseAcceptance.listAttach,event.data]);	
 		}
 		
 		private function listGroupChange(event:Event):void
@@ -618,7 +618,7 @@ package app.view
 							popupPanelCaseAcceptance.comboAcceptType.selectedItem = preAccepterType;
 						}
 						
-						attachProxy.refresh(popupPanelCaseAcceptance.report,AttachProxy.IMAGE);
+						attachProxy.refresh(popupPanelCaseAcceptance.report,AttachProxy.IMAGE,popupPanelCaseAcceptance.jurisdiction);
 						
 						popupPanelCaseAcceptance.listAccepterA = userProxy.listAccepterA;
 						var accepterA:UserVO = userProxy.getUser(popupPanelCaseAcceptance.report.accepterA);

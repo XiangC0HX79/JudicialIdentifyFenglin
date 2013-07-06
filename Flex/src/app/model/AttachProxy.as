@@ -55,7 +55,7 @@ package app.model
 			return data as AttachVO;
 		}
 		
-		public function refresh(report:ReportVO,type:String = NONE):void
+		public function refresh(report:ReportVO,type:String = NONE,jurisdiction:Boolean = false):void
 		{	
 			attach.listImage.removeAll();	
 			attach.listConsultImage.removeAll();
@@ -140,11 +140,7 @@ package app.model
 					}
 				}
 				
-				if(
-					(report.ReportStatus.label == "受理")
-					||
-					(report.ReportStatus.label == "打印")
-					)
+				if(jurisdiction)
 					attach.listImage.addItem(null);
 				
 				if(report.ReportStatus.label == "会诊")
@@ -239,9 +235,11 @@ package app.model
 				var attachImage:AttachImageVO = listImage[imageIndex] as AttachImageVO;
 				if(attachImage != null)
 				{
-					var url:String =  WebServiceCommand.WSDL + "Download.aspx";
+					var url:String =  WebServiceCommand.WSDL + "DownloadThumbnail.aspx";
 					url += "?reportNo=" + reportNo;
 					url += "&fileName=" + attachImage.bitmapName;
+					url += "&w=100";
+					url += "&h=100";
 										
 					var downloadURL:URLRequest = new URLRequest(encodeURI(url));	
 					downloadURL.method = URLRequestMethod.POST;

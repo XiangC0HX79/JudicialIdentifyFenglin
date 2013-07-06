@@ -23,30 +23,76 @@ package app.model
 			return data as ArrayCollection;
 		}
 				
-		public function refresh(dateBegin:String,dateEnd:String,filterFunction:Function,handleFunction:Function):void
+		public function refresh(whereClause:String,pageIndex:Number = 1,pageSize:Number = 20):void
 		{			
 			var sql:String = "SELECT * FROM " + WebServiceCommand.VIEW_REPORT;
-			if((dateBegin != "") && (dateEnd != ""))
-				sql += " WHERE 受理日期  <= #" + dateEnd + "# AND 受理日期 >= #" + dateBegin + "#";
+			if(whereClause != "")
+				sql += " WHERE " + whereClause;
+			
+			//if((dateBegin != "") && (dateEnd != ""))
+			//	sql += " WHERE 受理日期  <= #" + dateEnd + "# AND 受理日期 >= #" + dateBegin + "#";
 			
 			sendNotification(ApplicationFacade.NOTIFY_WEBSERVICE_SEND,
-				["GetTable",onResult
+				["GetReportCount",onGetReportCount
 					,[sql]
 				]);
 			
-			function onResult(result:ArrayCollection):void
+			function onGetReportCount(result:Number):void
 			{				
-				var arr:ArrayCollection = new ArrayCollection
+				var pageCount:Number = Math.ceil(result / pageSize);
+				
+				sendNotification(ApplicationFacade.NOTIFY_REPORT_PAGECOUNT,pageCount);
+				
+				sendNotification(ApplicationFacade.NOTIFY_WEBSERVICE_SEND,
+					["GetReport",onGetReport
+						,[sql,pageIndex,pageSize]
+					]);
+			}
+			
+			function onGetReport(result:ArrayCollection):void
+			{				
+				list.removeAll();
+				
+				//var arr:ArrayCollection = new ArrayCollection
 				for each(var item:Object in result)
 				{
-					arr.addItem(new ReportVO(item));
+					list.addItem(new ReportVO(item));
 				}
-				arr.filterFunction = filterFunction;
-				arr.refresh();
+				//arr.filterFunction = filterFunction;
+				//arr.refresh();
 				
-				setData(arr);
+				//setData(arr);
 				
-				handleFunction();
+				//handleFunction();
+			}
+		}
+				
+		public function filter(whereClause:String,pageIndex:Number = 1,pageSize:Number = 20):void
+		{			
+			var sql:String = "SELECT * FROM " + WebServiceCommand.VIEW_REPORT;
+			if(whereClause != "")
+				sql += " WHERE " + whereClause;
+			
+			sendNotification(ApplicationFacade.NOTIFY_WEBSERVICE_SEND,
+				["GetReport",onGetReport
+					,[sql,pageIndex,pageSize]
+				]);
+			
+			function onGetReport(result:ArrayCollection):void
+			{				
+				list.removeAll();
+				
+				//var arr:ArrayCollection = new ArrayCollection
+				for each(var item:Object in result)
+				{
+					list.addItem(new ReportVO(item));
+				}
+				//arr.filterFunction = filterFunction;
+				//arr.refresh();
+				
+				//setData(arr);
+				
+				//handleFunction();
 			}
 		}
 		

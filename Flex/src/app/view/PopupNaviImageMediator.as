@@ -1,14 +1,24 @@
 package app.view
 {
 	import app.ApplicationFacade;
+	import app.controller.WebServiceCommand;
 	import app.model.AttachProxy;
 	import app.model.vo.AttachImageVO;
+	import app.model.vo.ReportVO;
 	import app.view.components.PopupNaviImage;
 	
+	import flash.display.Bitmap;
 	import flash.display.BitmapData;
+	import flash.display.Loader;
+	import flash.display.LoaderInfo;
 	import flash.events.Event;
 	import flash.events.IOErrorEvent;
+	import flash.geom.Matrix;
 	import flash.net.FileReference;
+	import flash.net.URLLoader;
+	import flash.net.URLLoaderDataFormat;
+	import flash.net.URLRequest;
+	import flash.net.URLRequestMethod;
 	
 	import mx.events.FlexEvent;
 	
@@ -19,6 +29,8 @@ package app.view
 	public class PopupNaviImageMediator extends Mediator implements IMediator
 	{
 		public static const NAME:String = "PopupNaviImageMediator";
+		
+		private var _report:ReportVO;
 		
 		public function PopupNaviImageMediator(viewComponent:Object=null)
 		{
@@ -81,24 +93,21 @@ package app.view
 		{
 			popupNaviImage.listIndex--;
 			
-			var attachImage:AttachImageVO = popupNaviImage.listSource[popupNaviImage.listIndex];
-			popupNaviImage.source =  attachImage.bitmapData;
-			
-			initScales();
+			naviImage();
 		}
 		
 		private function onNextImage(event:Event):void
 		{			
 			popupNaviImage.listIndex++;
 			
-			var attachImage:AttachImageVO = popupNaviImage.listSource[popupNaviImage.listIndex];
-			popupNaviImage.source =  attachImage.bitmapData;
-			
-			initScales();
+			naviImage();
 		}
 		
 		private function initScales():void
-		{
+		{			
+			if(!popupNaviImage.initialized)
+				return;
+				
 			if(popupNaviImage.source == null)
 				return;
 							
@@ -181,17 +190,14 @@ package app.view
 						popupNaviImage.width = facade.retrieveMediator(ApplicationMediator.NAME).getViewComponent().width * 0.8;
 						popupNaviImage.height = facade.retrieveMediator(ApplicationMediator.NAME).getViewComponent().height * 0.8;
 						
-						var eventData:Array = notification.getBody()[1];
-						popupNaviImage.listSource = eventData[0];	
-						popupNaviImage.listIndex = eventData[1];	
+						//var eventData:Array = notification.getBody()[1];	
+						_report = notification.getBody()[1];
+						popupNaviImage.listSource = notification.getBody()[2];	
+						popupNaviImage.listIndex = notification.getBody()[3];
+						//var attachImage:AttachImageVO = popupNaviImage.listSource[popupNaviImage.listIndex];
+						//popupNaviImage.source =  attachImage.bitmapData;
 						
-						var attachImage:AttachImageVO = popupNaviImage.listSource[popupNaviImage.listIndex];
-						popupNaviImage.source =  attachImage.bitmapData;
-						
-						if(popupNaviImage.initialized)
-						{
-							initScales();
-						}
+						naviImage();
 					}
 					break;
 				
@@ -210,5 +216,68 @@ package app.view
 					break;
 			}
 		}
+		
+		private function naviImage():void
+		{			
+			sendNotification(ApplicationFacade.NOTIFY_APP_LOADINGSHOW,"正在下载图片。");
+			
+			var attachImage:AttachImageVO = popupNaviImage.listSource[popupNaviImage.listIndex] as AttachImageVO;
+			
+			var url:String =  WebServiceCommand.WSDL + "Download.aspx";
+			url += "?reportNo=" + _report.FullNO;
+			url += "&fileName=" + attachImage.bitmapName;
+			
+			var downloadURL:URLRequest = new URLRequest(encodeURI(url));	
+			downloadURL.method = URLRequestMethod.POST;
+			
+			var urlLoader:URLLoader = new URLLoader;
+			urlLoader.addEventListener(Event.COMPLETE,completeHandler);
+			urlLoader.addEventListener(IOErrorEvent.IO_ERROR,onIOError);					
+			urlLoader.dataFormat = URLLoaderDataFormat.BINARY;
+			urlLoader.load(downloadURL);
+		}
+				
+		private function onIOError(event:IOErrorEvent):void
+		{
+			sendNotification(ApplicationFacade.NOTIFY_APP_LOADINGHIDE);		
+			
+			sendNotification(ApplicationFacade.NOTIFY_APP_ALERTERROR,"文件传输失败。");	
+		}	
+		
+		private function completeHandler(event:Event):void   
+		{   								
+			var loader:Loader = new Loader();
+			loader.contentLoaderInfo.addEventListener(Event.COMPLETE,loaderCompleteHandler);  
+			loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR,onLoaderError);
+						
+			loader.loadBytes(event.currentTarget.data);
+			
+			var attachImage:AttachImageVO = popupNaviImage.listSource[popupNaviImage.listIndex] as AttachImageVO;
+			attachImage.bitmapArray = event.currentTarget.data;
+		}
+		
+		private function onLoaderError(event:IOErrorEvent):void
+		{			
+			var attachImage:AttachImageVO = popupNaviImage.listSource[popupNaviImage.listIndex] as AttachImageVO;
+			popupNaviImage.source = attachImage.bitmapData;
+			
+			initScales();
+			
+			sendNotification(ApplicationFacade.NOTIFY_APP_LOADINGHIDE);
+		}	
+		
+		private function loaderCompleteHandler(event:Event):void
+		{										
+			var loaderInfo:LoaderInfo = event.currentTarget as LoaderInfo;
+			var bitmap:Bitmap = Bitmap(loaderInfo.content);  
+			
+			var attachImage:AttachImageVO = popupNaviImage.listSource[popupNaviImage.listIndex] as AttachImageVO;
+			attachImage.bitmapData = bitmap.bitmapData;
+			popupNaviImage.source = attachImage.bitmapData;
+			
+			initScales();
+			
+			sendNotification(ApplicationFacade.NOTIFY_APP_LOADINGHIDE);
+		}   
 	}
 }

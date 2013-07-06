@@ -88,7 +88,12 @@ package app
 		 *案件-刷新
 		 */		
 		public static const NOTIFY_REPORT_REFRESH:String			= "ReportRefresh";
-				
+		
+		/**
+		 *获得案件页数
+		 */		
+		public static const NOTIFY_REPORT_PAGECOUNT:String			= "ReportPageCount";
+		
 		/**
 		 * Singleton ApplicationFacade Factory Method
 		 */
