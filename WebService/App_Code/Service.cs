@@ -507,7 +507,7 @@ public class Service : System.Web.Services.WebService
         {
             pathTemp = backPath + "\\沪枫林 " + year + " " + group + " " + getSubNo(reprortNo, 0) + "号";
             fileName = backPath + "\\沪枫林 " + year + " " + group + " " + getSubNo(reprortNo, 0) + "号" + ".zip";
-            sql = "SELECT * FROM 报告信息 WHERE 类别 = " + type + " AND 编号 = " + getSubNo(reprortNo, 0) + " AND 次级编号 = 0";
+            sql = "SELECT * FROM 报告信息 WHERE Year(受理日期) = " + year + " AND 类别 = " + type + " AND 编号 = " + getSubNo(reprortNo, 0) + " AND 次级编号 = 0";
         }
         else
         {

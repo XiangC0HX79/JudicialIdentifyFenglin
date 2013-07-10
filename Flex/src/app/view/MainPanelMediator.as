@@ -136,7 +136,7 @@ package app.view
 			
 			if(mainPanel.textNo.text != "")
 			{
-				r += "InStr(CStr(编号),'" + Number(mainPanel.textNo.text) + "') > 0 AND ";
+				r += "编号 = " + Number(mainPanel.textNo.text) + " AND ";
 			}
 			
 			if(mainPanel.textNo.text != "")
