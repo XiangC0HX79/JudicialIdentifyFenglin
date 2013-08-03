@@ -1,5 +1,7 @@
 package app.model.vo
 {
+	import flash.utils.ByteArray;
+	
 	import mx.collections.ArrayCollection;
 	
 	import spark.formatters.DateTimeFormatter;
