@@ -38,6 +38,25 @@ public partial class UploadFeedback : System.Web.UI.Page
             file.Flush();
             file.Close();
 
+            if (fileName.IndexOf("鉴定意见书", System.StringComparison.Ordinal) >= 0)
+            {
+                path = Server.MapPath("Report") + "\\" + reportNo;
+
+                file = new FileStream(path + "\\鉴定意见书.doc", FileMode.Create);
+                file.Write(byteArr, 0, byteArr.Length);
+                file.Flush();
+                file.Close();
+            }
+            else if (fileName.IndexOf("成型照片", System.StringComparison.Ordinal) >= 0)
+            {
+                path = Server.MapPath("Report") + "\\" + reportNo;
+
+                file = new FileStream(path + "\\成型照片.doc", FileMode.Create);
+                file.Write(byteArr, 0, byteArr.Length);
+                file.Flush();
+                file.Close();
+            }
+
             Response.Write("000");
         }
         catch (Exception ex)

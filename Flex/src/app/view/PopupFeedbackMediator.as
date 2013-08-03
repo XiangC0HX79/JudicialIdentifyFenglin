@@ -3,6 +3,7 @@ package app.view
 	import app.AppEvent;
 	import app.ApplicationFacade;
 	import app.controller.WebServiceCommand;
+	import app.model.AttachProxy;
 	import app.model.FeedbackProxy;
 	import app.model.dict.GroupDict;
 	import app.model.vo.FeedbackVO;
@@ -23,6 +24,7 @@ package app.view
 		public static const NAME:String = "PopupFeedbackMediator";
 		
 		private var feedbackProxy:FeedbackProxy;
+		private var attachProxy:AttachProxy;
 		
 		public function PopupFeedbackMediator(viewComponent:Object=null)
 		{
@@ -36,6 +38,7 @@ package app.view
 			popupFeedback.addEventListener(AppEvent.UPLOADATTACH,onUploadAttach);
 			
 			feedbackProxy = facade.retrieveProxy(FeedbackProxy.NAME) as FeedbackProxy;		
+			attachProxy = facade.retrieveProxy(AttachProxy.NAME) as AttachProxy;
 		}
 		
 		protected function get popupFeedback():PopupFeedback

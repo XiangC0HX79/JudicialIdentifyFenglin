@@ -50,7 +50,7 @@ package app.view
 		
 		private function onSubmit(event:Event):void
 		{
-			var sql:String = "SELECT 类别,Format(Sum(DateDiff('d', 打印接受日期, 打印日期))/COUNT(*),'#.###') + 1 AS 天数";
+			var sql:String = "SELECT 类别,CInt(Sum(DateDiff('d', 受理日期, 打印日期))/COUNT(*)) AS 天数";
 			sql += " FROM 报告信息 WHERE 打印接受日期 <> NULL AND 打印日期 <> NULL";
 			
 			if(naviStatisPrint.comboTime.selectedIndex == 0)
