@@ -262,8 +262,8 @@ package app.model
 				loader.contentLoaderInfo.addEventListener(Event.COMPLETE,loaderCompleteHandler);   
 				loader.loadBytes(event.currentTarget.data);
 				
-				var attachImage:AttachImageVO = listImage[imageIndex] as AttachImageVO;
-				attachImage.bitmapArray = event.currentTarget.data;
+				//var attachImage:AttachImageVO = listImage[imageIndex] as AttachImageVO;
+				//attachImage.bitmapArray = event.currentTarget.data;
 			}
 			
 			function loaderCompleteHandler(event:Event):void
@@ -272,16 +272,18 @@ package app.model
 				var bitmap:Bitmap = Bitmap(loaderInfo.content);  
 				
 				var attachImage:AttachImageVO = listImage[imageIndex] as AttachImageVO;			
-				attachImage.bitmapData = bitmap.bitmapData;
+				/*attachImage.bitmapData = bitmap.bitmapData;
 								
 				var scale:Number = (bitmap.width / bitmap.height);
 				var scale_width:Number = (scale > 1)?100:(scale * 100);
 				var scale_height:Number = (scale > 1)?(100 / scale):100;				
 				attachImage.facBitmapData = new BitmapData (scale_width, scale_height);
-				
+					
 				var scale_W:Number = scale_width / bitmap.width;
 				var matrix:Matrix = new Matrix(scale_W,0,0,scale_W,0,0);
-				attachImage.facBitmapData.draw(bitmap.bitmapData,matrix);	
+				attachImage.facBitmapData.draw(bitmap.bitmapData,matrix);	*/
+				
+				attachImage.facBitmapData = bitmap.bitmapData
 				
 				var jpegEncoder:JPEGEncoder = new JPEGEncoder;
 				attachImage.facBitmapArray = jpegEncoder.encode(attachImage.facBitmapData);
@@ -402,23 +404,31 @@ package app.model
 		}
 		
 		public function save(report:ReportVO):void
-		{
+		{	
+			var s:String = "";
+			for(var i:Number = 0;i<attach.listImage.length;i++)
+			{
+				var attachImage:AttachImageVO = attach.listImage[i] as AttachImageVO;
+				if(attachImage && !attachImage.bitmapArray)			
+					s += "初步照片" + (i + 1) + attachImage.bitmapType + " " + attachImage.bitmapName + ";";
+			}
+			
 			sendNotification(ApplicationFacade.NOTIFY_WEBSERVICE_SEND,
 				["UploadImage",onSetResult
 					,[
-						report.FullNO
+						report.FullNO,s
 					]
 				]);	
-			
-			function onSetResult(result:String):void
-			{						
-				for(var i:Number = 0;i<attach.listImage.length;i++)
-				{
-					var attachImage:AttachImageVO = attach.listImage[i] as AttachImageVO;
-					if(attachImage != null)			
-					{										
-						upload(report.FullNO,"初步照片" + (i + 1) + attachImage.bitmapType,attachImage.bitmapArray);
-					}
+		}
+		
+		private function onSetResult(result:String):void
+		{						
+			for(var i:Number = 0;i<attach.listImage.length;i++)
+			{
+				var attachImage:AttachImageVO = attach.listImage[i] as AttachImageVO;
+				if(attachImage && attachImage.bitmapArray)			
+				{										
+					upload(result,"初步照片" + (i + 1) + attachImage.bitmapType,attachImage.bitmapArray);
 				}
 			}
 		}

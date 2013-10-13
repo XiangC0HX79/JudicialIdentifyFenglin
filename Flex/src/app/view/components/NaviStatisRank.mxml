@@ -129,6 +129,43 @@
 			</s:DropDownList>	
 			<s:Label text="分" fontWeight="bold"/>
 		</s:HGroup>
+		
+		<s:HGroup verticalAlign="middle" height="100%" includeIn="All">			
+			<s:Label text="初稿打印人评分小于等于：" fontWeight="bold"/>
+			<s:DropDownList id="comboRank1" selectedIndex="9">
+				<s:ArrayCollection>
+					<fx:String>1</fx:String>
+					<fx:String>2</fx:String>
+					<fx:String>3</fx:String>
+					<fx:String>4</fx:String>
+					<fx:String>5</fx:String>
+					<fx:String>6</fx:String>
+					<fx:String>7</fx:String>
+					<fx:String>8</fx:String>
+					<fx:String>9</fx:String>
+					<fx:String>10</fx:String>
+				</s:ArrayCollection>
+			</s:DropDownList>	
+			<s:Label text="分" fontWeight="bold"/>	
+			<s:Spacer width="20"/>
+			<s:Label text="受理人C评分小于等于：" fontWeight="bold"/>
+			<s:DropDownList id="comboRank2" selectedIndex="9">
+				<s:ArrayCollection>
+					<fx:String>1</fx:String>
+					<fx:String>2</fx:String>
+					<fx:String>3</fx:String>
+					<fx:String>4</fx:String>
+					<fx:String>5</fx:String>
+					<fx:String>6</fx:String>
+					<fx:String>7</fx:String>
+					<fx:String>8</fx:String>
+					<fx:String>9</fx:String>
+					<fx:String>10</fx:String>
+				</s:ArrayCollection>
+			</s:DropDownList>	
+			<s:Label text="分" fontWeight="bold"/>
+		</s:HGroup>
+		
 		<s:Spacer width="100%"/>
 		<s:Button width="100" label="统　　计" skinClass="skins.skinLoginButton" buttonDown="dispatchEvent(new Event(SUBMIT))"/>
 		<s:Button width="100" label="表格下载" skinClass="skins.skinLoginButton" buttonDown="dispatchEvent(new Event(DOWNLOAD))"/>

@@ -258,25 +258,48 @@ public class Service : System.Web.Services.WebService
     }
     
     [WebMethod]
-    public String UploadImage(String reportNo)
+    public String UploadImage(String reportNo,string s)
     {
+        var files = s.Split(';');
+
         String path = Server.MapPath("Report") + "\\" + reportNo;
 
         if (Directory.Exists(path))
         {
+            var tmp = path + "\\tmp";
+            if (!Directory.Exists(tmp))
+                Directory.CreateDirectory(tmp);
+
+            foreach (var file in files)
+            {
+                if (file == "") continue;
+
+                var dsc = file.Split(' ')[0];
+                var src = file.Split(' ')[1];
+                File.Copy(path + "\\" + src, tmp + "\\" + dsc);
+            }
+
             foreach (String pathName in Directory.GetFiles(path))
             {
                 String fileName = pathName.Substring(pathName.LastIndexOf('\\') + 1);
                 if(fileName.IndexOf("初步照片") == 0)
                     File.Delete(pathName);
             }
+
+            foreach (String pathName in Directory.GetFiles(tmp))
+            {
+                String fileName = pathName.Substring(pathName.LastIndexOf('\\') + 1);
+                File.Move(tmp + "\\" + fileName, path + "\\" + fileName);
+            }
+
+            Directory.Delete(tmp);
         }
         else
         {
             Directory.CreateDirectory(path);
         }
 
-        return "000";
+        return reportNo;
     }
 
     [WebMethod]

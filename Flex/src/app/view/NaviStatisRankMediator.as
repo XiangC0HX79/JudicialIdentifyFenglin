@@ -164,19 +164,20 @@ package app.view
 				naviStatisRank.columnName.headerText = "打印人";
 			
 				sql += "打印人 AS 用户,打印人姓名 AS 姓名,(初审分数 + 1) AS 评分 FROM " + WebServiceCommand.VIEW_REPORT
-				+ " WHERE 初审分数 <> -1 and 初审分数 < " + naviStatisRank.comboRank.labelDisplay.text;
+				+ " WHERE 初审分数 >= 0 and 初审分数 < " + naviStatisRank.comboRank.labelDisplay.text;
 			}
 			else if(naviStatisRank.comboType.selectedIndex == 1)
 			{
 				naviStatisRank.columnName.headerText = "受理人C";
 				
 				sql += "受理人C AS 用户,受理人C姓名 AS 姓名,(复审分数 + 1) AS 评分 FROM " + WebServiceCommand.VIEW_REPORT
-					+ " WHERE 复审分数 <> -1 and 复审分数 < " + naviStatisRank.comboRank.labelDisplay.text;
+					+ " WHERE 复审分数  >= 0 and 复审分数 < " + naviStatisRank.comboRank.labelDisplay.text;
 			}
 			else
 			{
 				sql += "打印人姓名,(初审分数 + 1) AS 初稿评分,受理人C姓名,(复审分数 + 1) AS 初审评分 FROM " + WebServiceCommand.VIEW_REPORT
-					+ " WHERE 初审分数 <> -1 AND 复审分数 <> -1";
+					+ " WHERE 初审分数  >= 0 AND 初审分数 < " + naviStatisRank.comboRank1.labelDisplay.text
+					+ " AND 复审分数  >= 0 AND 复审分数 < " + naviStatisRank.comboRank2.labelDisplay.text;
 			}
 			
 			if(naviStatisRank.comboTime.selectedIndex == 0)
