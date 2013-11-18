@@ -1,18 +1,20 @@
 package app.view
 {
+	import flash.events.Event;
+	
+	import mx.events.FlexEvent;
+	
+	import spark.formatters.DateTimeFormatter;
+	
 	import app.ApplicationFacade;
 	import app.model.LoginProxy;
 	import app.model.MessageProxy;
 	import app.model.vo.LoginVO;
 	import app.view.components.PopupMessage;
 	
-	import flash.events.Event;
-	
 	import org.puremvc.as3.interfaces.IMediator;
 	import org.puremvc.as3.interfaces.INotification;
 	import org.puremvc.as3.patterns.mediator.Mediator;
-	
-	import spark.formatters.DateTimeFormatter;
 	
 	public class PopupMessageMediator extends Mediator implements IMediator
 	{
@@ -23,6 +25,8 @@ package app.view
 		public function PopupMessageMediator(viewComponent:Object=null)
 		{
 			super(NAME, viewComponent);
+			
+			popupMessage.addEventListener(FlexEvent.CREATION_COMPLETE,onCreation);
 			
 			popupMessage.addEventListener(PopupMessage.SUBMIT,onSubmit);
 			popupMessage.addEventListener(PopupMessage.CLOSE,onClose);
@@ -65,6 +69,13 @@ package app.view
 				}
 			}
 		}
+		
+		private function onCreation(event:FlexEvent):void
+		{								
+			popupMessage.maxHeight = popupMessage.height;
+			
+			sendNotification(ApplicationFacade.NOTIFY_POPUP_CREATE);
+		}			
 		
 		override public function listNotificationInterests():Array
 		{
