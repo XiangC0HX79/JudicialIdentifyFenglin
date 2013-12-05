@@ -8,24 +8,20 @@ using System.Web.UI.WebControls;
 using System.IO;
 using System.Runtime.InteropServices;
 
+using Aspose.Cells;
+
 public partial class PrintTable : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
-        String file = Request.Params["file"];
+        var file = Request.Params["file"];
 
         Byte[] byts = new byte[Request.InputStream.Length];
         Request.InputStream.Read(byts, 0, byts.Length);
         String data = Uri.UnescapeDataString(System.Text.Encoding.Default.GetString(byts));
 
-        String path = Server.MapPath("ExcelXlt");
-
-        Excel._Application excel = null;
-
-        Excel._Workbook workBook = null;
-
-        object oMissing = System.Reflection.Missing.Value;
-
+        var path = Server.MapPath("ExcelXlt");
+               
         try
         {
             if (!Directory.Exists(path + "\\Temp"))
@@ -39,13 +35,9 @@ public partial class PrintTable : System.Web.UI.Page
                     File.Delete(pathName);
                 }
             }
-            
-            excel = new Excel.ApplicationClass();
-            excel.Visible = false;
 
-            workBook = excel.Workbooks.Open(path + "\\" + file + ".xlt", oMissing, oMissing, oMissing, oMissing, oMissing, oMissing, oMissing,
-                oMissing, oMissing, oMissing, oMissing, oMissing, oMissing, oMissing);
-            
+            var workbook = new Workbook(path + "\\" + file + ".xlt");
+
             String[] cSplit = { "/C/" };
             String[] rSplit = { "/R/" };
             String[] pSplit = { "/P/" };
@@ -56,7 +48,7 @@ public partial class PrintTable : System.Web.UI.Page
                 //if (dataPages[p] == "")
                 //    break;
 
-                Excel._Worksheet workSheet = (Excel._Worksheet)workBook.Worksheets[p+1];
+                var workSheet = workbook.Worksheets[p];
 
                 String[] dataRows = dataPages[p].Split(rSplit, StringSplitOptions.RemoveEmptyEntries);
                 for (int i = 0; i < dataRows.Length; i++)
@@ -66,27 +58,20 @@ public partial class PrintTable : System.Web.UI.Page
 
                     if (i < dataRows.Length - 1)
                     {
-                        Excel.Range range = (Excel.Range)workSheet.Rows[i + 2, oMissing];
-                        range.Insert(Excel.XlInsertShiftDirection.xlShiftDown, Excel.XlInsertFormatOrigin.xlFormatFromRightOrBelow);
+                        workSheet.Cells.InsertRow(i+2);
+                        //Excel.Range range = (Excel.Range)workSheet.Rows[i + 2, oMissing];
+                        //range.Insert(Excel.XlInsertShiftDirection.xlShiftDown, Excel.XlInsertFormatOrigin.xlFormatFromRightOrBelow);
                     }
 
                     String[] dataColumns = dataRows[i].Split(cSplit, StringSplitOptions.None);
                     for (int j = 0; j < dataColumns.Length; j++)
-                        workSheet.Cells[i + 2, j + 1] = dataColumns[j];
+                        workSheet.Cells[i + 1, j].PutValue(dataColumns[j]);
                 }
             }
 
-            object oSaveFileName = path + "\\Temp\\" + file + ".xls";
-            object osaveFileFormat = Excel.XlFileFormat.xlWorkbookNormal;
+            //object oSaveFileName = path + "\\Temp\\" + file + ".xls";
 
-            workBook.SaveAs(oSaveFileName, Excel.XlFileFormat.xlWorkbookNormal, oMissing, oMissing, oMissing, oMissing, Excel.XlSaveAsAccessMode.xlExclusive,
-                oMissing, oMissing, oMissing, oMissing, oMissing);
-
-            workBook.Close(oMissing, oMissing, oMissing);
-            workBook = null;
-
-            excel.Quit();
-            excel = null;
+            workbook.Save(path + "\\Temp\\" + file + ".xls", FileFormatType.Excel97To2003);
 
             //以字符流的形式下载文件
             FileStream fs = new FileStream(path + "\\Temp\\" + file + ".xls", FileMode.Open);
@@ -103,18 +88,6 @@ public partial class PrintTable : System.Web.UI.Page
         catch (Exception ex)
         {
             Response.Write("<Root><ID>1</ID><Msg>" + ex.Message + "</Msg></Root>");
-        }
-
-        if (workBook != null)
-        {
-            workBook.Close(oMissing, oMissing, oMissing);
-            Marshal.ReleaseComObject(workBook);
-        }
-
-        if (excel != null)
-        {
-            excel.Quit();
-            Marshal.FinalReleaseComObject(excel);
         }
 
         Response.End();
