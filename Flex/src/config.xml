@@ -1,3 +1,3 @@
 <Config>
-	<WebServiceUrl>http://localhost:7517/WebService/</WebServiceUrl>
+	<WebServiceUrl>http://192.168.1.210/WebService/</WebServiceUrl>
 </Config>

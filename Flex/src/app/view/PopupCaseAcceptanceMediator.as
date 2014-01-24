@@ -279,8 +279,9 @@ package app.view
 						]
 					]);	
 			}
-			//未更换类型
-			else if(popupPanelCaseAcceptance.report.type == popupPanelCaseAcceptance.comboGroup.selectedIndex)
+			//未更换类型和年度
+			else if((popupPanelCaseAcceptance.report.type == popupPanelCaseAcceptance.comboGroup.selectedIndex)
+				&& (popupPanelCaseAcceptance.textReportYear.text == popupPanelCaseAcceptance.report.year))
 			{
 				sendNotification(ApplicationFacade.NOTIFY_WEBSERVICE_SEND,
 					["SubmitCase2",onSubmitCaseResult
@@ -293,7 +294,7 @@ package app.view
 			else
 			{
 				sendNotification(ApplicationFacade.NOTIFY_WEBSERVICE_SEND,
-					["SubmitCase1",onSubmitCaseResult
+					["SubmitCase1",onSubmitCaseResult3
 						,[
 							popupPanelCaseAcceptance.comboGroup.selectedIndex
 							,createUpdateSQL(type)
@@ -307,6 +308,30 @@ package app.view
 						(popupPanelCaseAcceptance.report.id < 0)?createInsertSQL(type):createUpdateSQL(type)
 					]
 				]);	*/
+			
+			function onSubmitCaseResult3(result:Number):void
+			{		
+				var oldNo:String = popupPanelCaseAcceptance.report.FullNO;
+					
+				popupPanelCaseAcceptance.report.type = popupPanelCaseAcceptance.comboGroup.selectedIndex;
+				popupPanelCaseAcceptance.report.no = result;//Number(popupPanelCaseAcceptance.textReportNo.text);
+				popupPanelCaseAcceptance.report.year = popupPanelCaseAcceptance.textReportYear.text;
+				
+				var newNo:String = popupPanelCaseAcceptance.report.FullNO;
+				
+				sendNotification(ApplicationFacade.NOTIFY_WEBSERVICE_SEND,
+					["RenoReport",onRenoReport
+						,[
+							oldNo
+							,newNo
+						]
+					]);	
+			}
+			
+			function onRenoReport(result:String):void
+			{				
+				reportProxy.refreshReport(popupPanelCaseAcceptance.report,resultHandle);				
+			}
 			
 			function onSubmitCaseResult(result:Number):void
 			{		

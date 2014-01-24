@@ -449,6 +449,23 @@ public class Service : System.Web.Services.WebService
     }
 
     [WebMethod]
+    public String RenoReport(String oldNo, String newNo)
+    {
+        String root = Server.MapPath("Report") + "\\";
+        
+		try
+		{
+			Directory.Move(root + oldNo,root + newNo); 
+		}
+		catch(Exception ex)
+		{
+			return ex.ToString();
+		}
+        
+        return "000";
+    }
+    
+    [WebMethod]
     public String SendMail()
     {
         SmtpClient smtp = new SmtpClient(); //实例化一个SmtpClient

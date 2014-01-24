@@ -37,7 +37,7 @@ package app.view
 			var contextMenu:ContextMenu=new ContextMenu();
 			contextMenu.hideBuiltInItems(); 
 			
-			var contextMenuItem:ContextMenuItem=new ContextMenuItem("版本：2.0.4");			
+			var contextMenuItem:ContextMenuItem=new ContextMenuItem("版本：2.0.6");			
 			contextMenu.customItems.push(contextMenuItem);
 			
 			login.contextMenu=contextMenu;
