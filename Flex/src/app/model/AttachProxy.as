@@ -1,11 +1,5 @@
 package app.model
 {
-	import app.ApplicationFacade;
-	import app.controller.WebServiceCommand;
-	import app.model.vo.AttachImageVO;
-	import app.model.vo.AttachVO;
-	import app.model.vo.ReportVO;
-	
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.Loader;
@@ -14,25 +8,36 @@ package app.model
 	import flash.events.Event;
 	import flash.events.IOErrorEvent;
 	import flash.events.ProgressEvent;
+	import flash.events.SecurityErrorEvent;
 	import flash.events.TimerEvent;
 	import flash.geom.Matrix;
 	import flash.net.FileFilter;
 	import flash.net.FileReference;
 	import flash.net.FileReferenceList;
+	import flash.net.Socket;
 	import flash.net.URLLoader;
 	import flash.net.URLLoaderDataFormat;
 	import flash.net.URLRequest;
 	import flash.net.URLRequestMethod;
 	import flash.net.URLStream;
 	import flash.net.URLVariables;
+	import flash.net.navigateToURL;
 	import flash.system.LoaderContext;
+	import flash.system.Security;
 	import flash.utils.ByteArray;
 	import flash.utils.Timer;
 	import flash.utils.setTimeout;
 	
 	import mx.collections.ArrayCollection;
+	import mx.events.CloseEvent;
 	import mx.graphics.codec.JPEGEncoder;
 	import mx.messaging.AbstractConsumer;
+	
+	import app.ApplicationFacade;
+	import app.controller.WebServiceCommand;
+	import app.model.vo.AttachImageVO;
+	import app.model.vo.AttachVO;
+	import app.model.vo.ReportVO;
 	
 	import org.puremvc.as3.interfaces.IProxy;
 	import org.puremvc.as3.patterns.proxy.Proxy;
@@ -44,15 +49,109 @@ package app.model
 		public static const NONE:String = "none";
 		public static const IMAGE:String = "image";
 		public static const CONSULTIMAGE:String = "consultimage";
+						
+		public static var SocketIP:String = "127.0.0.1";
+		public static var SocketPort:int = 12306;
+		
+		private var socket:Socket = new Socket;
+		private var countError:int = 0;
 		
 		public function AttachProxy()
 		{
 			super(NAME, new AttachVO);
+			
+			socket.addEventListener(Event.CONNECT,onConnect);	
+			
+			socket.addEventListener(Event.CLOSE,onClose);		
+			socket.addEventListener(IOErrorEvent.IO_ERROR,ioErrorHandle);			
+			socket.addEventListener(SecurityErrorEvent.SECURITY_ERROR,onSocketOnSecurityError);		
+			socket.addEventListener(ProgressEvent.SOCKET_DATA,onGetData);  				
+			
+			socket.connect(SocketIP,SocketPort);			
+			Security.loadPolicyFile("xmlsocket://" + SocketIP + ":" + SocketPort);
+		}
+		
+		//接受数据		
+		private var bytesArray:ByteArray = new ByteArray;
+		private function onGetData(event:ProgressEvent):void 
+		{  			
+			var target:Socket = event.target as Socket;
+			
+			while(target.bytesAvailable)			
+			{			
+				target.readBytes(bytesArray,bytesArray.length);
+				
+				//如出现Error: Error #2030: 遇到文件尾错误，请用：str=socket.readUTFBytes(socket.bytesAvailable);				
+			}
+			
+			decodeDataGet(bytesArray);
+			
+			bytesArray= new ByteArray;
+		}  
+		
+		private function decodeDataGet(data:ByteArray):void
+		{			
+			var recves:String = data.readUTFBytes(data.length);
+			var colRecv:Array = recves.split('@');
+			
+			for each(var item:String in colRecv)
+			{
+				trace(item);
+				
+				if(item == "SUCCESS")
+					sendNotification(ApplicationFacade.NOTIFY_APP_LOADINGHIDE);	
+				else if(item == "FAILED")
+				{
+					sendNotification(ApplicationFacade.NOTIFY_APP_LOADINGHIDE);	
+					
+					sendNotification(ApplicationFacade.NOTIFY_APP_ALERTERROR,"文件传输失败,请重新上传。");				
+				}
+			}
 		}
 		
 		public function get attach():AttachVO
 		{
 			return data as AttachVO;
+		}
+		
+		private function onConnect( event:Event ):void 
+		{  			
+			countError = 1;			
+			
+			trace("onConnect");
+		}  
+		
+		private function onClose(event:Event):void 
+		{  			
+			handleConnectError();
+		} 
+		
+		private function ioErrorHandle(event:IOErrorEvent):void
+		{  
+			handleConnectError();
+		}  
+		
+		private function onSocketOnSecurityError(event:SecurityErrorEvent):void 
+		{  
+			handleConnectError();			
+		}  
+		
+		private function handleConnectError():void
+		{
+			trace("handleConnectError");
+			
+			if((countError == 0) || (countError > 5))
+				sendNotification(ApplicationFacade.NOTIFY_APP_LOADINGSHOW,"Socket服务器连接失败，请检查网络！");
+			else
+				reConnect();
+		}		
+		
+		private function reConnect():void
+		{
+			//sendNotification(ApplicationFacade.NOTIFY_LOADINGBAR_SHOW,"服务器断开连接，正在重连...");
+			
+			countError++;			
+			socket.connect(SocketIP,SocketPort);
 		}
 		
 		public function refresh(report:ReportVO,type:String = NONE,jurisdiction:Boolean = false):void
@@ -161,8 +260,57 @@ package app.model
 		}	
 		
 		private function upload(reportNo:String,fileName:String,requestData:ByteArray):void
-		{
+		{			
 			sendNotification(ApplicationFacade.NOTIFY_APP_LOADINGSHOW,"正在上传文件...");
+			
+			if(socket.connected)
+			{
+				//reportNo
+				var message:ByteArray=new ByteArray();
+				message.writeUTFBytes(reportNo);
+				
+				var len:uint = message.length;	
+				
+				socket.writeByte(len & 0xFF);
+				socket.writeByte(len >> 8 & 0xFF);
+				socket.writeByte(len >> 16 & 0xFF);
+				socket.writeByte(len >> 24 & 0xFF);
+				
+				socket.writeBytes(message);
+				
+				//fileName
+				message.clear();
+				message.writeUTFBytes(fileName);
+				
+				len = message.length;	
+				
+				socket.writeByte(len & 0xFF);
+				socket.writeByte(len >> 8 & 0xFF);
+				socket.writeByte(len >> 16 & 0xFF);
+				socket.writeByte(len >> 24 & 0xFF);
+				
+				socket.writeBytes(message);
+				
+				//requestData
+				len = requestData.length;
+				
+				socket.writeByte(len & 0xFF);
+				socket.writeByte(len >> 8 & 0xFF);
+				socket.writeByte(len >> 16 & 0xFF);
+				socket.writeByte(len >> 24 & 0xFF);
+				
+				socket.writeBytes(requestData);
+				
+				socket.flush();		
+			}
+			else
+			{
+				sendNotification(ApplicationFacade.NOTIFY_APP_LOADINGHIDE);		
+				
+				sendNotification(ApplicationFacade.NOTIFY_APP_ALERTERROR,"文件传输失败,请重新上传。");					
+			}
+			
+			return;
 						
 			var pageLength:Number = 1024 * 1024;
 			var pageNumber:Number = Math.ceil(requestData.length / pageLength);

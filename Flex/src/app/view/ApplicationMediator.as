@@ -1,5 +1,12 @@
 package app.view
 {		
+	import flash.events.Event;
+	import flash.events.MouseEvent;
+	import flash.utils.Timer;
+	
+	import mx.controls.ToolTip;
+	import mx.events.ResizeEvent;
+	
 	import app.ApplicationFacade;
 	import app.view.components.NaviManageBackup;
 	import app.view.components.NaviManageData;
@@ -34,13 +41,6 @@ package app.view
 	import app.view.components.PopupStatis;
 	import app.view.components.PopupSysManager;
 	import app.view.components.subComponents.BasePopupPanel;
-	
-	import flash.events.Event;
-	import flash.events.MouseEvent;
-	import flash.utils.Timer;
-	
-	import mx.controls.ToolTip;
-	import mx.events.ResizeEvent;
 	
 	import org.puremvc.as3.interfaces.IMediator;
 	import org.puremvc.as3.interfaces.INotification;

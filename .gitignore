@@ -5,3 +5,5 @@ WebService/App_Data/*
 WebService/Backup/*
 WebService/Report/*
 WebService/ExcelXlt/Temp/*
+SysService/obj/
+SysService/bin

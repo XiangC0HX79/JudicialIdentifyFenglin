@@ -1,13 +1,5 @@
 package app.controller
 {	
-	import app.ApplicationFacade;
-	import app.model.dict.AcceptAddressDict;
-	import app.model.dict.GroupDict;
-	import app.model.dict.ReportStatusDict;
-	import app.model.dict.RightDict;
-	import app.model.dict.RoleDict;
-	import app.model.dict.SendStatusDict;
-	
 	import flash.events.Event;
 	import flash.events.IOErrorEvent;
 	import flash.net.URLLoader;
@@ -15,6 +7,15 @@ package app.controller
 	import flash.utils.Dictionary;
 	
 	import mx.collections.ArrayCollection;
+	
+	import app.ApplicationFacade;
+	import app.model.AttachProxy;
+	import app.model.dict.AcceptAddressDict;
+	import app.model.dict.GroupDict;
+	import app.model.dict.ReportStatusDict;
+	import app.model.dict.RightDict;
+	import app.model.dict.RoleDict;
+	import app.model.dict.SendStatusDict;
 	
 	import org.puremvc.as3.interfaces.ICommand;
 	import org.puremvc.as3.interfaces.INotification;
@@ -71,6 +72,8 @@ package app.controller
 			else
 			{				
 				WebServiceCommand.WSDL = xml.WebServiceUrl;
+				AttachProxy.SocketIP = xml.SocketIP;
+				AttachProxy.SocketPort = Number(xml.SocketPort);
 				
 				//服务器时间同步
 				sendNotification(ApplicationFacade.NOTIFY_TIME_SYN);

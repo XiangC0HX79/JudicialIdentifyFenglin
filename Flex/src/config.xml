@@ -1,3 +1,5 @@
 <Config>
-	<WebServiceUrl>http://192.168.1.210/WebService/</WebServiceUrl>
+	<WebServiceUrl>http://localhost:7517/WebService/</WebServiceUrl>
+	<SocketIP>127.0.0.1</SocketIP>
+	<SocketPort>12306</SocketPort>
 </Config>
