@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Web;
@@ -16,7 +17,7 @@ public partial class DownloadThumbnail : System.Web.UI.Page
             var w = Convert.ToInt32(HttpUtility.UrlDecode(Request.Params["w"]));
             var h = Convert.ToInt32(HttpUtility.UrlDecode(Request.Params["h"]));
 
-            var oi = Image.FromFile(Server.MapPath("Report") + "\\" + reportNo + "\\" + fileName);
+            var oi = Image.FromFile(ConfigurationManager.AppSettings["reportDir"] + "\\" + reportNo + "\\" + fileName);
 
             var scale = Math.Min((Double)w / oi.Width, (Double)h / (oi.Height));
 

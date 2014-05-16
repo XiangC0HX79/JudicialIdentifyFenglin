@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Web;
 using System.Web.Services;
@@ -144,7 +145,7 @@ public class Service : System.Web.Services.WebService
         DataColumn column = new DataColumn("FileName", Type.GetType("System.String"));
         dataTable.Columns.Add(column);
 
-        String path = Server.MapPath("Report") + "\\" + reportNo;
+        String path = ConfigurationManager.AppSettings["reportDir"] + "\\" + reportNo;
 
         if (!Directory.Exists(path))
             Directory.CreateDirectory(path);
@@ -163,8 +164,8 @@ public class Service : System.Web.Services.WebService
     [WebMethod]
     public String DeleteAttachImage(String reportNo, String imgName,String facName)
     {
-        String img = Server.MapPath("Report") + "\\" + reportNo + "\\" + imgName;
-        String fac = Server.MapPath("Report") + "\\" + reportNo + "\\" + facName;
+        String img = ConfigurationManager.AppSettings["reportDir"] + "\\" + reportNo + "\\" + imgName;
+        String fac = ConfigurationManager.AppSettings["reportDir"] + "\\" + reportNo + "\\" + facName;
 
         if (File.Exists(img))
         {
@@ -232,9 +233,9 @@ public class Service : System.Web.Services.WebService
             String year = report["年度"].ToString();
             String group = report["参数值"].ToString();
 
-            String curDir = Server.MapPath("Report") + "\\" + "沪枫林 " + year + " " + group + " " + getSubNo(no, 0) +
+            String curDir = ConfigurationManager.AppSettings["reportDir"] + "\\" + "沪枫林 " + year + " " + group + " " + getSubNo(no, 0) +
                             " 号";
-            String backDir = Server.MapPath("Report") + "\\" + "沪枫林 " + year + " " + group + " " +
+            String backDir = ConfigurationManager.AppSettings["reportDir"] + "\\" + "沪枫林 " + year + " " + group + " " +
                              getSubNo(no, subID + 1) + " 号";
 
             Directory.Move(curDir, backDir);
@@ -262,7 +263,7 @@ public class Service : System.Web.Services.WebService
     {
         var files = s.Split(';');
 
-        String path = Server.MapPath("Report") + "\\" + reportNo;
+        String path = ConfigurationManager.AppSettings["reportDir"] + "\\" + reportNo;
 
         if (Directory.Exists(path))
         {
@@ -305,7 +306,7 @@ public class Service : System.Web.Services.WebService
     [WebMethod]
     public String UploadConsultImage(String reportNo)
     {
-        String path = Server.MapPath("Report") + "\\" + reportNo;
+        String path = ConfigurationManager.AppSettings["reportDir"] + "\\" + reportNo;
 
         if (Directory.Exists(path))
         {
@@ -327,7 +328,7 @@ public class Service : System.Web.Services.WebService
     [WebMethod]
     public String CopyFstExamin(String reportNo)
     {
-        String path = Server.MapPath("Report") + "\\" + reportNo;
+        String path = ConfigurationManager.AppSettings["reportDir"] + "\\" + reportNo;
 
         String dstFileName = path + "\\鉴定意见书（初审）.doc";
         String srcFileName = path + "\\鉴定意见书（初稿）.doc";
@@ -345,7 +346,7 @@ public class Service : System.Web.Services.WebService
     [WebMethod]
     public String CopySndExamin(String reportNo)
     {
-        String path = Server.MapPath("Report") + "\\" + reportNo;
+        String path = ConfigurationManager.AppSettings["reportDir"] + "\\" + reportNo;
 
         String dstFileName = path + "\\鉴定意见书（复审）.doc";
         String srcFileName = path + "\\鉴定意见书（初审）.doc";
@@ -363,7 +364,7 @@ public class Service : System.Web.Services.WebService
     [WebMethod]
     public String CopyFinal(String reportNo)
     {
-        String path = Server.MapPath("Report") + "\\" + reportNo;
+        String path = ConfigurationManager.AppSettings["reportDir"] + "\\" + reportNo;
 
         String dstFileName = path + "\\鉴定意见书.doc";
         String srcFileName = path + "\\鉴定意见书（复审）.doc";
@@ -451,7 +452,7 @@ public class Service : System.Web.Services.WebService
     [WebMethod]
     public String RenoReport(String oldNo, String newNo)
     {
-        String root = Server.MapPath("Report") + "\\";
+        String root = ConfigurationManager.AppSettings["reportDir"] + "\\";
         
 		try
 		{
@@ -538,7 +539,7 @@ public class Service : System.Web.Services.WebService
 
 
         String backPath = Server.MapPath("Backup");
-        String reportPath = Server.MapPath("Report");
+        String reportPath = ConfigurationManager.AppSettings["reportDir"];
         String pathTemp = "";
         String fileName = "";
 

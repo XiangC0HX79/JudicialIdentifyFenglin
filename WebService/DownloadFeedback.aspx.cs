@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
@@ -18,7 +19,7 @@ public partial class DownloadFeedback : System.Web.UI.Page
         String reportNo = HttpUtility.UrlDecode(Request.Params["reportNo"]);
         String fileName = HttpUtility.UrlDecode(Request.Params["fileName"]);
 
-        String path = Server.MapPath("Report") + "\\" + reportNo + "\\跟踪反馈" + no;
+        String path = ConfigurationManager.AppSettings["reportDir"] + "\\" + reportNo + "\\跟踪反馈" + no;
 
         //以字符流的形式下载文件
         FileStream fs = new FileStream(path + "\\" + fileName, FileMode.Open);

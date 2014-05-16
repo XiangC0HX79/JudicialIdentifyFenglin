@@ -23,7 +23,7 @@ public partial class Upload : System.Web.UI.Page
             String fileName = HttpUtility.UrlDecode(Request.Params["fileName"]); ;
             String pageIndex = HttpUtility.UrlDecode(Request.Params["pageIndex"]);
 
-            String path = Server.MapPath("Report") + "\\" + reportNo;
+            String path = ConfigurationManager.AppSettings["reportDir"] + "\\" + reportNo;
 
             Byte[] byteArr = new Byte[Request.InputStream.Length];
             Request.InputStream.Read(byteArr, 0, byteArr.Length);
